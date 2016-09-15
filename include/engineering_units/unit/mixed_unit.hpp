@@ -93,9 +93,7 @@ struct unit_traits< mixed_unit<Ts ... > >
     
     typedef unit base;
 
-    template< std::intmax_t N, std::intmax_t D = 1 >
-    using base_ = mixed_unit< 
-        typename unit_traits<Ts>::template base_<N, D> ... >;
+    // TODO: implement base_<Num, Den>
 
     typedef std::ratio<1> exponent;
     

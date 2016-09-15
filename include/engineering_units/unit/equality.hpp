@@ -29,50 +29,61 @@
 
 #include <engineering_units/unit/traits.hpp>
 #include <engineering_units/unit/mixed_unit.hpp>
-
 #include <engineering_units/unit/multiply.hpp>
+#include <engineering_units/unit/pow.hpp>
 
-/**
- * @brief Compare two non @c mixed_unit for equality
- */
-template<class Lhs,
-         class Rhs>
-constexpr std::enable_if_t<
-    engunits::is_unit_v<Lhs> && 
-    engunits::is_unit_v<Rhs>,
-    bool> operator==( const Lhs &, const Rhs & )
-{
-    // Check for same base and same exponent
-    return engunits::is_same_base_v<Lhs, Rhs> &&
-           std::ratio_equal<
-                typename engunits::unit_traits<Lhs>::exponent,
-                typename engunits::unit_traits<Rhs>::exponent
-            >::value;
-}
-
-template<class Lhs,
-         class Rhs>
-constexpr std::enable_if_t<
-    engunits::is_unit_v<Lhs> && 
-    engunits::is_unit_v<Rhs>,
-    bool> operator!=( const Lhs & lhs, const Rhs & rhs)
-{
-    return !(lhs == rhs);
-}
 
 namespace engunits
 {
     
 namespace detail
 {
-template<class ... Lhs, class ... Rhs>
-constexpr bool flat_mixed_units_equal( const mixed_unit<Lhs...> & lhs, 
-                                       const mixed_unit<Rhs...> &)
+
+template<class Lhs, class Rhs>
+constexpr bool flat_equal( const Lhs & lhs, 
+                           const Rhs & rhs)
 {
-    return sizeof ... (Lhs) == sizeof ... (Rhs)  &&
-        all_of(
-            contains(lhs, Rhs{}) ...
-        );
+    static_assert( is_unit_v<Lhs> && is_unit_v<Rhs>, "");
+    
+    return is_same_base_v<Lhs, Rhs> &&
+           std::ratio_equal< 
+                typename unit_traits<Lhs>::exponent,
+                typename unit_traits<Rhs>::exponent
+            >::value;
+}
+
+template<class ... Lhs>
+constexpr bool flat_equal( const mixed_unit<Lhs...> &, 
+                           const dimensionless & )
+{
+    return false;
+}
+
+template<class Lhs>
+constexpr bool flat_equal( const Lhs & lhs, 
+                           const dimensionless &)
+{
+    return false;
+}
+
+constexpr bool flat_equal( const dimensionless &, 
+                           const dimensionless &)
+{
+    return true;
+}
+
+template<class ... Lhs, class Rhs>
+constexpr bool flat_equal( const mixed_unit<Lhs...> & lhs, 
+                           const Rhs & rhs )
+{
+    return flat_equal( lhs * inverse(rhs), dimensionless() );
+}
+
+template<class ... Lhs, class ... Rhs>
+constexpr bool flat_equal( const mixed_unit<Lhs...> & lhs, 
+                           const mixed_unit<Rhs...> & rhs )
+{
+    return flat_equal( lhs * inverse(rhs), dimensionless() );
 }
 
 }
@@ -84,7 +95,7 @@ template<class ... Lhs, class ... Rhs>
 constexpr bool operator==( const mixed_unit<Lhs...> & lhs, 
                            const mixed_unit<Rhs...> & rhs)
 {
-    return detail::flat_mixed_units_equal( lhs.flat(), rhs.flat() );
+    return detail::flat_equal(lhs.flat(), rhs.flat());
 }
 
 template<class ... Lhs, class ... Rhs>
@@ -95,34 +106,87 @@ constexpr bool operator!=( const mixed_unit<Lhs...> & lhs,
 }
 
 template<class ... Lhs, class Rhs>
-constexpr bool operator==( const mixed_unit<Lhs...> &, 
-                           const Rhs & )
+constexpr bool operator==( const mixed_unit<Lhs...> & lhs, 
+                           const Rhs &)
 {
-    return false;
+    return detail::flat_equal(lhs.flat(), 
+                              unit_traits<Rhs>::flat() );
 }
 
 template<class ... Lhs, class Rhs>
-constexpr bool operator!=( const mixed_unit<Lhs...> &, 
-                           const Rhs & )
+constexpr bool operator!=( const mixed_unit<Lhs...> & lhs, 
+                           const Rhs & rhs )
 {
-    return true;
+    return !(lhs == rhs);
 }
 
 template<class Lhs, class ... Rhs>
-constexpr bool operator==( const Lhs &,
-                           const mixed_unit<Rhs...> & )
+constexpr bool operator==( const Lhs & lhs,
+                           const mixed_unit<Rhs...> & rhs )
 {
-    return false;
+    return detail::flat_equal( rhs.flat(),
+                               unit_traits<Lhs>::flat() );
 }
 
 template<class Lhs, class ... Rhs>
-constexpr bool operator!=( const Lhs &,
-                           const mixed_unit<Rhs...> & )
+constexpr bool operator!=( const Lhs & lhs,
+                           const mixed_unit<Rhs...> & rhs )
 {
-    return true;
+    return !(lhs == rhs);
 }
 
+template<class ... Lhs>
+constexpr bool operator==( const mixed_unit<Lhs...> & lhs, 
+                           const dimensionless & rhs )
+{
+    return detail::flat_equal( lhs.flat(), rhs );
 }
 
+template<class ... Lhs>
+constexpr bool operator!=( const mixed_unit<Lhs...> & lhs, 
+                           const dimensionless & rhs )
+{
+    return !(lhs == rhs);
+}
+
+template<class ... Rhs>
+constexpr bool operator==( const dimensionless & lhs,
+                           const mixed_unit<Rhs...> & rhs)
+{
+    return detail::flat_equal( rhs.flat(), lhs );
+}
+
+template<class ... Rhs>
+constexpr bool operator!=( const dimensionless & lhs,
+                           const mixed_unit<Rhs...> & rhs )
+{
+    return !(lhs == rhs);
+}
+
+/**
+ * @brief Compare two non @c mixed_unit for equality
+ */
+template<class Lhs,
+         class Rhs>
+constexpr std::enable_if_t<
+    engunits::is_unit_v<Lhs> && 
+    engunits::is_unit_v<Rhs>,
+    bool> operator==( const Lhs & lhs, const Rhs & rhs)
+{
+    return detail::flat_equal(
+        unit_traits<Lhs>::flat(),
+        unit_traits<Rhs>::flat() );
+}
+
+template<class Lhs,
+         class Rhs>
+constexpr std::enable_if_t<
+    engunits::is_unit_v<Lhs> && 
+    engunits::is_unit_v<Rhs>,
+    bool> operator!=( const Lhs & lhs, const Rhs & rhs)
+{
+    return !(lhs == rhs);
+}
+}
 
 #endif //ENGINEERING_UNITS_UNIT_EQUALITY_HPP

@@ -16,11 +16,16 @@ target_link_libraries( conversion_test engineering_units )
 
 add_test( NAME conversion_test COMMAND conversion_test )
 
-## mixed_unit
-add_executable( mixed_unit_test unit/mixed_unit.cpp )
-target_link_libraries( mixed_unit_test engineering_units )
+## equality
+add_executable( equality_test unit/equality.cpp )
+target_link_libraries( equality_test engineering_units )
 
-add_test( NAME mixed_unit COMMAND mixed_unit_test )
+add_executable( equality_test_with_ns unit/equality.cpp )
+target_link_libraries( equality_test_with_ns engineering_units )
+target_compile_definitions( equality_test_with_ns PRIVATE "ENGUNITS_WITH_USING_NAMESPACE")
+
+add_test( NAME equality_test         COMMAND equality_test )
+add_test( NAME equality_test_with_ns COMMAND equality_test_with_ns )
 
 ## multiply
 add_executable( multiply_test unit/multiply.cpp )

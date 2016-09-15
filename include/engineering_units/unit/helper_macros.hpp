@@ -34,16 +34,16 @@
 
 #include <engineering_units/detail/string_literal.hpp>
 
-#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol)         \
-    template<std::intmax_t Num, std::intmax_t Den = 1>  \
-    struct name##_                                      \
-    {                                                   \
-        typedef base_unit_tag unit_category;            \
-        static constexpr auto symbol()                  \
-        {                                               \
-            return detail::make_string_literal(#symbol);\
-        }                                               \
-    };                                                  \
+#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol)                     \
+    template<std::intmax_t Num, std::intmax_t Den = 1>              \
+    struct name##_                                                  \
+    {                                                               \
+        typedef engunits::base_unit_tag unit_category;              \
+        static constexpr auto symbol()                              \
+        {                                                           \
+            return engunits::detail::make_string_literal(#symbol);  \
+        }                                                           \
+    };                                                              \
     using name = name##_<1>
 
 
@@ -51,10 +51,10 @@
     template<std::intmax_t Num, std::intmax_t Den = 1>               \
     struct name##_                                                   \
     {                                                                \
-        typedef base_unit_tag unit_category;                         \
+        typedef engunits::base_unit_tag unit_category;               \
         static constexpr auto symbol()                               \
         {                                                            \
-            return detail::make_string_literal(#symbol);             \
+            return engunits::detail::make_string_literal(#symbol);   \
         }                                                            \
         typedef parent root_unit;                                    \
     };                                                               \
@@ -66,20 +66,20 @@
     }                                                                \
     static_assert(true, "")
 
-#define ENGUNITS_DEFINE_DERIVED_UNIT(name, symbol, ...)     \
-    template<std::intmax_t Num, std::intmax_t Den = 1>      \
-    struct name##_                                          \
-    {                                                       \
-        typedef derived_unit_tag unit_category;             \
-        static constexpr auto symbol()                      \
-        {                                                   \
-            return detail::make_string_literal(#symbol);    \
-        }                                                   \
-        static constexpr auto flat()                        \
-        {                                                   \
-            return mixed_unit< __VA_ARGS__ >{};             \
-        }                                                   \
-    };                                                      \
+#define ENGUNITS_DEFINE_DERIVED_UNIT(name, symbol, ...)             \
+    template<std::intmax_t Num, std::intmax_t Den = 1>              \
+    struct name##_                                                  \
+    {                                                               \
+        typedef engunits::derived_unit_tag unit_category;           \
+        static constexpr auto symbol()                              \
+        {                                                           \
+            return engunits::detail::make_string_literal(#symbol);  \
+        }                                                           \
+        static constexpr auto flat()                                \
+        {                                                           \
+            return engunits::mixed_unit< __VA_ARGS__ >{};           \
+        }                                                           \
+    };                                                              \
     using name = name##_<1> 
 
     

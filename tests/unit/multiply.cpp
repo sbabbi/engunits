@@ -197,32 +197,4 @@ int main()
     test_dimensionless();
     test_base();
     test_mixed();
-    
-    
-    
-/*
-
-    static_assert( si::meter() * si::meter() == si::meter_<2>(),
-                   "m * m == m^2 " );
-    
-    static_assert( si::meter() * si::second() == 
-                   mixed_unit< si::meter, si::second >(),
-                   "m * s == m * s " );
-
-    static_assert( si::meter() * si::meter_<-1>() == 
-                   dimensionless(),
-                   "m * s == m * s " );
-    
-    static_assert( mixed_unit< si::meter, si::second >() * si::meter_<-1>() == 
-                   si::second(),
-                   "(m * s) * m^-1 == s " );
-        
-    static_assert( si::meter_<-1>() * mixed_unit< si::meter, si::second >() == 
-                   si::second(),
-                   "m^-1 * (m * s) == s " );
-    
-    static_assert( mixed_unit<si::meter, si::second, si::kilogram>() *
-                   si::second() ==
-                   mixed_unit<si::meter, si::second_<2>, si::kilogram>(),
-                   "(m * s * kg) * s == (m * s^2 * kg)" );*/
 }
