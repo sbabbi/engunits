@@ -24,24 +24,51 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_UNIT_POW_HPP
+#define ENGINEERING_UNITS_UNIT_POW_HPP
 
-#include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
-#include <engineering_units/si/time.hpp>
+#include <ratio>
+#include <type_traits>
+
+#include <engineering_units/unit/traits.hpp>
+#include <engineering_units/unit/mixed_unit.hpp>
 
 namespace engunits
 {
-namespace si
+
+template<class Base, class Exponent>
+constexpr auto pow( const Base &,
+                    Exponent,
+                    std::enable_if_t<
+                        is_unit_v<Base>,
+                        int
+                    > = 0 )
 {
+    using result_exp = std::ratio_multiply<
+                       typename unit_traits<Base>::exponent,
+                       Exponent
+                       >;
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_IMPORT_OPERATORS
+    return typename unit_traits<Base>::template
+           base_< result_exp::num, result_exp::den > {};
+}
+
+template<class ... Ts, class Exponent>
+constexpr auto pow( const mixed_unit<Ts...> &,
+                    Exponent )
+{
+    return mixed_unit<
+           decltype( pow<Ts, Exponent>( {}, {} ) ) ... > {};
+}
+
+template<class T>
+constexpr auto inverse( const T & x,
+                        std::enable_if_t< is_unit_v<T>, int> = 0 )
+{
+    return pow( x, std::ratio<-1> {} );
+}
 
 }
-}
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
 
+#endif //ENGINEERING_UNITS_UNIT_POW_HPP

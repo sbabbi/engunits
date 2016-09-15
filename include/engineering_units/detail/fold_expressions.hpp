@@ -48,7 +48,7 @@ constexpr bool all_of()
 template<class ... Ts>
 constexpr bool all_of( bool head, Ts && ... tail )
 {
-    return head && all_of( std::forward<Ts>(tail) ... );
+    return head && all_of( std::forward<Ts>( tail ) ... );
 }
 
 constexpr bool any_of()
@@ -64,14 +64,14 @@ constexpr bool any_of()
 template<class ... Ts>
 constexpr bool any_of( bool head, Ts && ... tail )
 {
-    return head || any_of( std::forward<Ts>(tail) ... );
+    return head || any_of( std::forward<Ts>( tail ) ... );
 }
 
 constexpr bool none_of()
 {
     return true;
 }
-   
+
 /**
  * @internal
  * @brief True if none of the arguments is true.
@@ -80,7 +80,7 @@ constexpr bool none_of()
 template<class ... Ts>
 constexpr bool none_of( bool head, Ts && ... tail )
 {
-    return !head && none_of( std::forward<Ts>(tail) ... );
+    return !head && none_of( std::forward<Ts>( tail ) ... );
 }
 
 /**
@@ -88,23 +88,23 @@ constexpr bool none_of( bool head, Ts && ... tail )
  * @brief Concatenate the elements using operator+ and a separator
  */
 template<class T, class Head, class ... Ts>
-constexpr auto concatenate( T const & sep, Head && head, Ts && ... ts)
+constexpr auto concatenate( T const & sep, Head && head, Ts && ... ts )
 {
-    return std::forward<Head>(head) + sep + 
-            concatenate( std::forward<Ts>(ts) ... );
+    return std::forward<Head>( head ) + sep +
+           concatenate( std::forward<Ts>( ts ) ... );
 }
 
 template<class T, class Head, class Last>
-constexpr auto concatenate( T const & sep, Head && head, Last && last)
+constexpr auto concatenate( T const & sep, Head && head, Last && last )
 {
-    return std::forward<Head>(head) + sep + 
-           std::forward<Last>(last);
+    return std::forward<Head>( head ) + sep +
+           std::forward<Last>( last );
 }
 
 template<class T, class Head, class Last>
-constexpr auto concatenate( T const & sep, Head && head)
+constexpr auto concatenate( T const & sep, Head && head )
 {
-    return std::forward<Head>(head);
+    return std::forward<Head>( head );
 }
 
 /**
@@ -112,22 +112,22 @@ constexpr auto concatenate( T const & sep, Head && head)
  * @brief Multiplies all the elements together
  */
 template<class Head, class Next>
-constexpr auto multiply( Head && head, Next && next)
+constexpr auto multiply( Head && head, Next && next )
 {
-    return std::forward<Head>(head) * std::forward<Next>(next);
+    return std::forward<Head>( head ) * std::forward<Next>( next );
 }
 
 template<class Head>
 constexpr auto multiply( Head && head )
 {
-    return std::forward<Head>(head);
+    return std::forward<Head>( head );
 }
 
 template<class Head, class Next, class ... Tail>
-constexpr auto multiply( Head && head, Next && next, Tail && ... tail)
+constexpr auto multiply( Head && head, Next && next, Tail && ... tail )
 {
-    return multiply( std::forward<Head>(head) * std::forward<Next>(next),
-                     multiply( std::forward<Tail>(tail) ... ) );
+    return multiply( std::forward<Head>( head ) * std::forward<Next>( next ),
+                     multiply( std::forward<Tail>( tail ) ... ) );
 }
 
 

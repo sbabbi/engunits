@@ -31,9 +31,7 @@
 
 #include <engineering_units/unit/traits.hpp>
 
-#include <engineering_units/detail/contains.hpp>
 #include <engineering_units/detail/fold_expressions.hpp>
-#include <engineering_units/detail/type_wrapper.hpp>
 
 namespace engunits
 {
@@ -61,8 +59,7 @@ constexpr bool is_mixed_unit_v = is_mixed_unit<T>::value;
  * No duplicates are allowed, i.e. "m^2, m" is ill-formed.
  */
 template<class ... Ts>
-struct mixed_unit : 
-    private detail::type_wrapper< typename unit_traits<Ts>::base > ...
+struct mixed_unit
 {
     static_assert( detail::all_of( is_unit_v<Ts> ... ),
                    "All elements of mixed_unit must be units" );
@@ -73,7 +70,9 @@ struct mixed_unit :
     
     static_assert( detail::none_of( detail::is_mixed_unit_v<Ts> ... ),
                    "mixed_unit of mixed_unit are not allowed" );
-        
+    
+    //TODO: static_assert Ts bases are all different
+
     static constexpr auto symbol()
     {
         return concatenate(' ', Ts::symbol() ... );
@@ -106,91 +105,6 @@ struct unit_traits< mixed_unit<Ts ... > >
         return unit::flat();
     }
 };
-
-
-namespace detail
-{
-
-template<class Head, class ... Tail>
-constexpr auto front( mixed_unit<Head, Tail ... > const & )
-{
-    return Head{};
-}
-
-template<class Head, class ... Tail>
-constexpr auto pop_front( mixed_unit<Head, Tail ... > const & )
-{
-    return mixed_unit<Tail...>{};
-}
-
-template<class Head, class Tail >
-constexpr auto pop_front( mixed_unit<Head, Tail> const & )
-{
-    return Tail{};
-}
-
-template<class ... Ts, class ... Us >
-constexpr auto join( mixed_unit<Ts ... > const &,
-                     mixed_unit<Us ... > const & )
-{
-    return mixed_unit<Ts ..., Us ... >{};
-}
-
-template<class T, class ... Ts >
-constexpr auto join( mixed_unit<Ts ... > const &, const T & )
-{
-    return mixed_unit<Ts ..., T>{};
-}
-
-template<class T, class ... Ts >
-constexpr auto join( const T &, mixed_unit<Ts ... > const & )
-{
-    return mixed_unit<T, Ts ... >{};
-}
-
-template<class ... Ts >
-constexpr auto join( mixed_unit<Ts ... > const &, const dimensionless & )
-{
-    return mixed_unit<Ts ...>{};
-}
-
-template<class ... Ts >
-constexpr auto join( const dimensionless &, mixed_unit<Ts ... > const & )
-{
-    return mixed_unit<Ts ... >{};
-}
-
-template<class T>
-constexpr auto join( const T & t, const dimensionless &, 
-                     std::enable_if_t<
-                        is_unit_v<T>,
-                        int
-                     > = {} )
-{
-    return t;
-}
-
-template<class U>
-constexpr auto join( const dimensionless &, const U & u, 
-                     std::enable_if_t<
-                        is_unit_v<U>,
-                        int
-                     > = {} )
-{
-    return u;
-}
-
-template<class T, class U>
-constexpr auto join( const T &, const U &, 
-                     std::enable_if_t<
-                        is_unit_v<T> && is_unit_v<U>,
-                        int
-                     > = {} )
-{
-    return mixed_unit<T, U>{};
-}
-
-}
 
 }
 

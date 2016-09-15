@@ -30,173 +30,192 @@
 #include <engineering_units/unit/mixed_unit.hpp>
 #include <engineering_units/unit/traits.hpp>
 
-#include <engineering_units/detail/fold_expressions.hpp>
+#include <engineering_units/detail/merge.hpp>
 
 namespace engunits
 {
 
 namespace detail
 {
-  
-// Compute the result of multiplying two non-mixed_unit
-// This can be:
-//  1) A mixed_unit if the two units have different base
-//  2) A non mixed-unit if the two units have the same base
-//  3) A dimensionless unit if the two units have the same base and opposite exponents
-template<class Lhs, class Rhs, class = void>
-struct multiply_non_mixed_result
-{
-    static_assert( !( is_mixed_unit_v<Lhs> || is_mixed_unit_v<Rhs> ), "" );
     
-    typedef mixed_unit<Lhs, Rhs> type;
+struct multiply_strategy
+{
+
+    template<class ... Ts, class ... Us >
+    static constexpr auto join( mixed_unit<Ts ... > const &,
+                                mixed_unit<Us ... > const & )
+    {
+        return mixed_unit<Ts ..., Us ... >{};
+    }
+
+    template<class T, class ... Ts >
+    static constexpr auto join( mixed_unit<Ts ... > const &, const T & )
+    {
+        return mixed_unit<Ts ..., T>{};
+    }
+
+    template<class T, class ... Ts >
+    static constexpr auto join( const T &, mixed_unit<Ts ... > const & )
+    {
+        return mixed_unit<T, Ts ... >{};
+    }
+
+    template<class ... Ts >
+    static constexpr auto join( mixed_unit<Ts ... > const &, 
+                                const dimensionless & )
+    {
+        return mixed_unit<Ts ...>{};
+    }
+
+    template<class ... Ts >
+    static constexpr auto join( const dimensionless &, 
+                                mixed_unit<Ts ... > const & )
+    {
+        return mixed_unit<Ts ... >{};
+    }
+
+    static constexpr auto join( const dimensionless &, 
+                                const dimensionless & )
+    {
+        return dimensionless{};
+    }
+
+    template<class T>
+    static constexpr auto join( const T & t, 
+                                const dimensionless &, 
+                                std::enable_if_t<
+                                    is_unit_v<T>,
+                                    int
+                                > = {} )
+    {
+        return t;
+    }
+
+    template<class U>
+    static constexpr auto join( const dimensionless &,
+                                const U & u, 
+                                std::enable_if_t<
+                                    is_unit_v<U>,
+                                    int
+                                > = {} )
+    {
+        return u;
+    }
+    
+    template<class Base, class Exponent>
+    static constexpr auto raise( const Base &, Exponent )
+    {
+        return typename unit_traits<Base>::template 
+            base_< Exponent::num, Exponent::den > {};
+    }
+    
+    template<class Base>
+    static constexpr auto raise( const Base &, std::ratio<0> )
+    {
+        return dimensionless{};
+    }
+    
+    template<class T, class U>
+    static constexpr auto join_unit( const T &, const U &, std::true_type )
+    {
+        using base = typename unit_traits<T>::base;
+
+        using exponent = std::ratio_add<
+            typename unit_traits<T>::exponent,
+            typename unit_traits<U>::exponent >;
+
+        return raise( base{}, exponent{} );
+    }
+    
+    template<class T, class U>
+    static constexpr auto join_unit( const T &, const U &, std::false_type )
+    {
+        return mixed_unit<T, U>{};
+    }
+
+    template<class T, class U>
+    static constexpr auto join( const T & t,
+                                const U & u, 
+                                std::enable_if_t<
+                                    is_unit_v<T> && 
+                                    is_unit_v<U>,
+                                    int
+                                > = {} )
+    {
+        return join_unit(t, u, is_same_base<T,U>{} );
+    }
+
+    template<class Head, class ... Tail>
+    static constexpr auto front( mixed_unit<Head, Tail ... > const & )
+    {
+        return Head{};
+    }
+
+    template<class Head, class Tail>
+    static constexpr auto back( mixed_unit<Head, Tail > const & )
+    {
+        return Tail{};
+    }
+
+    template<class Head, class ... Tail>
+    static constexpr auto back( mixed_unit<Head, Tail ... > const & )
+    {
+        return back( mixed_unit<Tail ... >{} );
+    }
+
+    template<class Head, class ... Tail>
+    static constexpr auto pop_front( mixed_unit<Head, Tail ... > const & )
+    {
+        return mixed_unit<Tail...>{};
+    }
+
+    template<class Head, class Tail >
+    static constexpr auto pop_front( mixed_unit<Head, Tail> const & )
+    {
+        return Tail{};
+    }
+
+    template<class Head, class ... Tail>
+    static constexpr auto pop_back( mixed_unit<Head, Tail ... > const & )
+    {
+        return join( Head{}, pop_back( mixed_unit<Tail...>{} ) );
+    }
+
+    template<class Head, class Tail >
+    static constexpr auto pop_back( mixed_unit<Head, Tail> const & )
+    {
+        return Head{};
+    }
 };
 
-template<class Lhs, 
-         class Rhs >
-struct multiply_non_mixed_result<
-    Lhs,
-    Rhs,
-    std::enable_if_t< 
-        is_same_base_v<Lhs, Rhs>
-    >
->
-{
-    static_assert( !( is_mixed_unit_v<Lhs> || is_mixed_unit_v<Rhs> ), "" );
+template<class U, class T>
+struct can_multiply : is_same_base<U, T> {};
 
-    using lhs_exp = typename unit_traits<Lhs>::exponent;
-    using rhs_exp = typename unit_traits<Rhs>::exponent;
-    
-    template< std::intmax_t N, std::intmax_t D = 1 >
-    using base_ = typename unit_traits<Lhs>::template base_<N, D>;
+template<class U>
+struct can_multiply<U, dimensionless> : std::true_type {};
 
-    using exp = std::ratio_add<lhs_exp, rhs_exp>;
-    
-    typedef std::conditional_t<
-        std::ratio_equal< exp, std::ratio<0> >::value,
-        dimensionless,
-        base_<exp::num, exp::den> > type;
-};
+template<class U>
+struct can_multiply<dimensionless, U> : std::true_type {};
+
+template<>
+struct can_multiply<dimensionless, dimensionless> : std::true_type {};
+
+constexpr merge_t< mixed_unit,
+                   multiply_strategy,
+                   can_multiply > multiplies{};
 
 }
 
 template<class Lhs, class Rhs>
-constexpr typename std::enable_if_t<
-    is_unit_v<Lhs> && 
-    is_unit_v<Rhs> &&
-    !detail::is_mixed_unit_v<Lhs> &&
-    !detail::is_mixed_unit_v<Rhs>,
+constexpr auto operator* (const Lhs & lhs, const Rhs & rhs) ->
 
-    typename detail::multiply_non_mixed_result< Lhs, Rhs >
->::type operator* (const Lhs &, const Rhs & )
+    std::enable_if_t<
+        is_unit_v<Lhs> && 
+        is_unit_v<Rhs>,
+        decltype( detail::multiplies(lhs, rhs) )
+    >
 {
-    return {};
-}
-
-namespace detail
-{
-
-template<class ... Ts, class Lhs>
-constexpr auto mixed_unit_mult_helper( const Lhs & lhs,
-                                       const mixed_unit<Ts ... > & rhs,
-                                       std::false_type /*lhs_in_rhs*/ )
-{
-    return join(lhs, rhs);
-}
-
-template<class ... Ts, class Rhs>
-constexpr auto mixed_unit_mult_helper( const mixed_unit<Ts ... > & lhs,
-                                       const Rhs & rhs,
-                                       std::false_type /*rhs_in_lhs*/ )
-{
-    return join(lhs, rhs);
-}
-
-template<class Head, class ... Tail, class Lhs>
-constexpr auto mixed_unit_mult_helper( const Lhs & lhs,
-                                       const mixed_unit<Head, Tail ... > & rhs,
-                                       std::true_type /*lhs_in_rhs*/,
-                                       std::enable_if_t<
-                                         is_same_base_v<Head, Lhs>,
-                                         int
-                                       > = 0 )
-{
-    return join( lhs * front(rhs), pop_front(rhs) );
-}
-
-template<class Head, class ... Tail, class Rhs>
-constexpr auto mixed_unit_mult_helper( const mixed_unit<Head, Tail ... > & lhs,
-                                       const Rhs & rhs,
-                                       std::true_type /*rhs_in_lhs*/,
-                                       std::enable_if_t<
-                                         is_same_base_v<Head, Rhs>,
-                                         int
-                                       > = 0 )
-{
-    return join( rhs * front(lhs), pop_front(lhs) );
-}
-
-template<class Head, class ... Tail, class Lhs>
-constexpr auto mixed_unit_mult_helper( const Lhs & lhs,
-                                       const mixed_unit<Head, Tail ... > & rhs,
-                                       std::true_type /*lhs_in_rhs*/,
-                                       std::enable_if_t<
-                                         !is_same_base_v<Head, Lhs>,
-                                         int
-                                       > = 0 )
-{
-    return join( front(rhs), lhs * pop_front(rhs) );
-}
-
-template<class Head, class ... Tail, class Rhs>
-constexpr auto mixed_unit_mult_helper( const mixed_unit<Head, Tail ... > & lhs,
-                                       const Rhs & rhs,
-                                       std::true_type /*rhs_in_lhs*/,
-                                       std::enable_if_t<
-                                         !is_same_base_v<Head, Rhs>,
-                                         int
-                                       > = 0 )
-{
-    return join( front(lhs), pop_front(lhs) * rhs );
-}
-
-
-}
-
-template<class ... Ts,
-         class Rhs,
-         class = std::enable_if_t< is_unit_v<Rhs> > >
-constexpr auto operator*(const mixed_unit<Ts ... > & lhs,
-                         const Rhs & rhs)
-{
-    using can_merge = std::integral_constant<
-        bool,
-        detail::any_of( is_same_base_v<Rhs, Ts> ... )>;
-
-    return detail::mixed_unit_mult_helper( lhs, rhs, can_merge{} );
-}
-
-template<class Lhs,
-         class ... Ts,
-         class = std::enable_if_t< is_unit_v<Lhs> > >
-constexpr auto operator*(const Lhs & lhs,
-                         const mixed_unit< Ts ... > & rhs)
-{
-    using can_merge = std::integral_constant<
-        bool,
-        detail::any_of( is_same_base_v<Lhs, Ts> ... )>;
-
-    return detail::mixed_unit_mult_helper( lhs, rhs, can_merge{} );
-                                           
-}
-
-/**
- * @brief Multiply two @c mixed_unit
- */
-template<class ... Lhs, class ... Rhs>
-constexpr auto operator*(const mixed_unit<Lhs ... > & lhs,
-                         const mixed_unit<Rhs ... > &)
-{
-    return detail::multiply( lhs, Rhs{} ... );
+    return detail::multiplies(lhs, rhs);
 }
 
 }

@@ -59,8 +59,8 @@
         typedef parent root_unit;                                    \
     };                                                               \
     using name = name##_<1>;                                         \
-    constexpr long double conversion_factor( parent const & from,    \
-                                             name const & to )       \
+    constexpr long double custom_conversion( name const & from,      \
+                                             parent const & to )     \
     {                                                                \
         return conv_factor;                                          \
     }                                                                \

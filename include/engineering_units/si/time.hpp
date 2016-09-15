@@ -34,12 +34,12 @@ namespace engunits
 namespace si
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT(second, s);
-ENGUNITS_DEFINE_BASE_UNIT(decisecond,  ds, second, 0.1);
-ENGUNITS_DEFINE_BASE_UNIT(centisecond, cs, second, 0.01);
-ENGUNITS_DEFINE_BASE_UNIT(millisecond, ms, second, 0.001);
-ENGUNITS_DEFINE_BASE_UNIT(minute,     min, second, 60);
-ENGUNITS_DEFINE_BASE_UNIT(hour,         h, second, 3600);
+ENGUNITS_DEFINE_ROOT_UNIT( second, s );
+ENGUNITS_DEFINE_BASE_UNIT( decisecond,  ds, second, 0.1L );
+ENGUNITS_DEFINE_BASE_UNIT( centisecond, cs, second, 0.01L );
+ENGUNITS_DEFINE_BASE_UNIT( millisecond, ms, second, 0.001L );
+ENGUNITS_DEFINE_BASE_UNIT( minute,     min, second, 60.0L );
+ENGUNITS_DEFINE_BASE_UNIT( hour,         h, second, 3600.0L );
 
 ENGUNITS_IMPORT_OPERATORS
 

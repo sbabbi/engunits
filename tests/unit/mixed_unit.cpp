@@ -1,4 +1,3 @@
-
 /**
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
@@ -25,7 +24,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <tuple>
 #include <engineering_units/unit/mixed_unit.hpp>
 #include <engineering_units/si/length.hpp>
 #include <engineering_units/si/time.hpp>
@@ -58,7 +56,7 @@ int main()
         mixed_unit< si::meter, si::second >() != 
         mixed_unit< si::meter_<2>, si::second>(),
         " m * s != m^2 * s");
-    
+ 
     static_assert(
         mixed_unit< si::meter_<2>, si::kilogram_<-1>, si::second >() == 
         mixed_unit< si::kilogram_<-1>, si::meter_<2>, si::second >(),

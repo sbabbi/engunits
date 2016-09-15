@@ -24,30 +24,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_DETAIL_TYPE_WRAPPER_HPP
-#define ENGINEERING_UNITS_DETAIL_TYPE_WRAPPER_HPP
+#ifndef ENGINEERING_UNITS_IMPERIAL_LENGTH_HPP
+#define ENGINEERING_UNITS_IMPERIAL_LENGTH_HPP
 
-#include <utility>
+#include <engineering_units/unit/helper_macros.hpp>
+#include <engineering_units/si/length.hpp>
+
 
 namespace engunits
 {
-
-namespace detail
+namespace imperial
 {
 
-/**
- * @internal
- * @brief Simple type useful to wrap things
- */
-template<class T> 
-struct type_wrapper
-{
-    typedef T type;
-};
+ENGUNITS_DEFINE_BASE_UNIT( feet, ft, si::meter, 0.3048L );
+ENGUNITS_DEFINE_BASE_UNIT( inch, in, feet, ( 1.0L / 12.0L ) );
+ENGUNITS_IMPORT_OPERATORS
 
 }
 }
 
-#endif //ENGINEERING_UNITS_DETAIL_TYPE_WRAPPER_HPP
-
-
+#endif //ENGINEERING_UNITS_IMPERIAL_LENGTH_HPP

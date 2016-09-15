@@ -27,7 +27,6 @@
 #ifndef ENGINEERING_UNITS_DETAIL_CONTAINS_HPP
 #define ENGINEERING_UNITS_DETAIL_CONTAINS_HPP
 
-#include <utility>
 #include <type_traits>
 
 #include <engineering_units/detail/fold_expressions.hpp>
@@ -42,7 +41,7 @@ namespace detail
  * @internal
  * @brief Checks if @p el is contained inside @p seq
  * @tparam Sequence A class template that models a sequence.
- */    
+ */
 template<template<class ... > class Sequence,
          class ... Ts,
          class T>

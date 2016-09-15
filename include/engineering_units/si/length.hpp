@@ -34,13 +34,13 @@ namespace engunits
 namespace si
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT(meter, m);
-ENGUNITS_DEFINE_BASE_UNIT(decimeter,  dm, meter, 0.1);
-ENGUNITS_DEFINE_BASE_UNIT(centimeter, cm, meter, 0.01);
-ENGUNITS_DEFINE_BASE_UNIT(millimeter, mm, meter, 0.001);
-ENGUNITS_DEFINE_BASE_UNIT(decameter, dam, meter, 10.0);
-ENGUNITS_DEFINE_BASE_UNIT(hectometer, hm, meter, 100.0);
-ENGUNITS_DEFINE_BASE_UNIT(kilometer,  km, meter, 1000.0);
+ENGUNITS_DEFINE_ROOT_UNIT( meter, m );
+ENGUNITS_DEFINE_BASE_UNIT( decimeter,  dm, meter, 0.1L );
+ENGUNITS_DEFINE_BASE_UNIT( centimeter, cm, meter, 0.01L );
+ENGUNITS_DEFINE_BASE_UNIT( millimeter, mm, meter, 0.001L );
+ENGUNITS_DEFINE_BASE_UNIT( decameter, dam, meter, 10.0L );
+ENGUNITS_DEFINE_BASE_UNIT( hectometer, hm, meter, 100.0L );
+ENGUNITS_DEFINE_BASE_UNIT( kilometer,  km, meter, 1000.0L );
 ENGUNITS_IMPORT_OPERATORS
 
 }

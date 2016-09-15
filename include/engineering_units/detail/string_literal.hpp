@@ -40,54 +40,59 @@ namespace detail
 template<std::size_t N>
 struct string_literal
 {
-    string_literal(const char (&x)[N+1]) : v_{}
+    string_literal( const char( &x )[N+1] ) : v_ {}
     {
         for ( int i = 0; i < N; ++i )
             v_[i] = x[i];
+
         v_[N] = 0;
     }
-    
-    constexpr const char * c_str() const noexcept { return v_; }
-    
-    constexpr char operator[](std::size_t i) const
+
+    constexpr const char * c_str() const noexcept
+    {
+        return v_;
+    }
+
+    constexpr char operator[]( std::size_t i ) const
     {
         return v_[i];
     }
-    
+
     template<std::size_t U>
-    string_literal<N+U> operator+(const string_literal<U> & other ) const noexcept
+    string_literal<N+U> operator+( const string_literal<U> & other ) const noexcept
     {
         char buff[U+N+1];
+
         for ( int i = 0; i < N; ++i )
             buff[i] = v_[i];
-        
+
         for ( int i = 0; i < U; ++i )
             buff[i + N] = other[i];
-        
+
         buff[U+N] = 0;
-        
-        return string_literal<N+U>(buff);
+
+        return string_literal<N+U>( buff );
     }
 
     operator std::string() const
     {
-        return std::string(v_);
+        return std::string( v_ );
     }
-    
+
 private:
     char v_[N+1];
 };
 
 template<std::size_t N>
-std::ostream& operator<<(std::ostream & os, string_literal<N> const & s)
+std::ostream & operator<<( std::ostream & os, string_literal<N> const & s )
 {
     return os << s.c_str();
 }
 
 template<std::size_t N>
-constexpr string_literal<N-1> make_string_literal(const char (&x)[N])
+constexpr string_literal<N-1> make_string_literal( const char( &x )[N] )
 {
-    return string_literal<N-1>(x);
+    return string_literal<N-1>( x );
 }
 
 }

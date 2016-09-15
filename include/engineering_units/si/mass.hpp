@@ -34,14 +34,14 @@ namespace engunits
 namespace si
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT(kilogram, kg);
-ENGUNITS_DEFINE_BASE_UNIT(tonne,      t, kilogram, 1000);
-ENGUNITS_DEFINE_BASE_UNIT(hectogram, hg, kilogram, 0.1);
-ENGUNITS_DEFINE_BASE_UNIT(decagram, dag, kilogram, 0.01);
-ENGUNITS_DEFINE_BASE_UNIT(gram,       g, kilogram, 0.001);
-ENGUNITS_DEFINE_BASE_UNIT(decigram,  dg, kilogram, 0.0001);
-ENGUNITS_DEFINE_BASE_UNIT(centigram, cg, kilogram, 0.00001);
-ENGUNITS_DEFINE_BASE_UNIT(milligram, mg, kilogram, 0.000001);
+ENGUNITS_DEFINE_ROOT_UNIT( kilogram, kg );
+ENGUNITS_DEFINE_BASE_UNIT( tonne,      t, kilogram, 1000.0L );
+ENGUNITS_DEFINE_BASE_UNIT( hectogram, hg, kilogram, 0.1L );
+ENGUNITS_DEFINE_BASE_UNIT( decagram, dag, kilogram, 0.01L );
+ENGUNITS_DEFINE_BASE_UNIT( gram,       g, kilogram, 0.001L );
+ENGUNITS_DEFINE_BASE_UNIT( decigram,  dg, kilogram, 0.0001L );
+ENGUNITS_DEFINE_BASE_UNIT( centigram, cg, kilogram, 0.00001L );
+ENGUNITS_DEFINE_BASE_UNIT( milligram, mg, kilogram, 0.000001L );
 
 
 ENGUNITS_IMPORT_OPERATORS

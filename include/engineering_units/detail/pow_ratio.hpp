@@ -24,24 +24,79 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_DETAIL_POW_RATIO_HPP
+#define ENGINEERING_UNITS_DETAIL_POW_RATIO_HPP
 
-#include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
-#include <engineering_units/si/time.hpp>
 
 namespace engunits
 {
-namespace si
+
+namespace detail
 {
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_IMPORT_OPERATORS
+
+/**
+ * @internal
+ * @brief compute @p base raised to @p num
+ */
+constexpr long double pow_ratio( long double base,
+                                 std::intmax_t num )
+{
+    if ( num < 0 )
+    {
+        return pow_ratio( 1.0L / base, -num );
+    }
+
+    long double y = 1.0L;
+
+    for ( std::intmax_t i = 0; i < num; ++i )
+    {
+        y = y * base;
+    }
+
+    return y;
+}
+
+/**
+ * @internal
+ * @brief compute @p base raised to @p num / @p den
+ * @note This is moderately sensitive to rounding error, for best results use
+ *  co-prime @p num @p den.
+ */
+constexpr long double pow_ratio( long double base,
+                                 std::intmax_t num,
+                                 std::intmax_t den )
+{
+    if ( den < 0 )
+    {
+        return pow_ratio( 1.0L / base, num, -den );
+    }
+
+    long double y = pow_ratio( base, num );
+
+    if ( den == 1 )
+    {
+        return y;
+    }
+
+    // Solve x^den == y
+    long double x = 1.0;
+
+    for ( int i = 0; i < 1000; ++i )
+    {
+        const long double delta = ( y / pow_ratio( x, den-1 ) - x ) / den;
+
+        if ( x + delta == x )
+            break;
+
+        x += delta;
+    }
+
+    return x;
+}
 
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
+#endif //ENGINEERING_UNITS_DETAIL_POW_RATIO_HPP
 
