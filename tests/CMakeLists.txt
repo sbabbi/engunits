@@ -10,6 +10,12 @@ target_link_libraries( contains_test engineering_units )
 add_test( NAME contains COMMAND contains_test )
 
 ### unit
+## base_conversion
+add_executable( base_conversion_test unit/base_conversion.cpp )
+target_link_libraries( base_conversion_test engineering_units )
+
+add_test( NAME base_conversion_test COMMAND base_conversion_test )
+
 ## conversion
 add_executable( conversion_test unit/conversion.cpp )
 target_link_libraries( conversion_test engineering_units )

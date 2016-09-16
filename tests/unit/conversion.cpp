@@ -24,65 +24,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <engineering_units/unit/base_conversion.hpp>
 #include <engineering_units/unit/conversion.hpp>
+
 #include <engineering_units/si/length.hpp>
 #include <engineering_units/si/time.hpp>
 #include <engineering_units/si/mass.hpp>
 #include <engineering_units/si/force.hpp>
 #include <engineering_units/imperial/length.hpp>
-
-template<class From, class To, class = void>
-struct check_base_unit_conversion : std::false_type {};
-
-template<class From, class To>
-struct check_base_unit_conversion<
-    From,
-    To,
-    decltype( engunits::detail::base_unit_conversion(From{}, To{}), void() )> : 
-std::true_type {};
-
-void check_custom_conversion()
-{
-    namespace si = engunits::si;
-    using engunits::detail::custom_conversion_exists_v;
-    
-    static_assert( custom_conversion_exists_v< si::millimeter, si::meter >,
-                   " custom_conversion meter, millimeter " );
-}
-
-void check_basic_conversion()
-{
-    namespace si = engunits::si;
-    namespace imperial = engunits::imperial;
-
-    using engunits::detail::base_unit_conversion;
-    using engunits::detail::find_common_ancestor_t;
-    
-    static_assert( base_unit_conversion( si::meter(), si::meter() ) == 1.0L,
-                   " 1 meter == 1 meter " );
-    
-    static_assert( base_unit_conversion( si::meter(), si::millimeter() ) == (1.0L / 0.001L),
-                   " 1 meter == 1000 millimeters" );
-    
-    static_assert( base_unit_conversion( si::millimeter(), si::meter() ) == 0.001L,
-                   " 1 millimeter == 0.001 meter" );
-    
-    static_assert( check_base_unit_conversion<si::millimeter, si::second>::value == false,
-                   "millimeter can not be converted to second" );
-    
-    static_assert( check_base_unit_conversion<imperial::inch, imperial::feet>::value == true,
-                   "inch can be converted to feet" );
-    
-    static_assert( std::is_same<
-                    find_common_ancestor_t< imperial::inch, si::meter >,
-                    si::meter >::value, "ancestor(inch, meter) == meter" );
-    
-//     static_assert( base_unit_conversion(imperial::inch(), si::meter()) ==
-//                         (1.0L / 12.0L) * 0.3048L,
-//                    "inch to meter" );
-
-}
 
 void check_derived_conversion()
 {
@@ -101,7 +49,5 @@ void check_derived_conversion()
 
 int main()
 {
-    check_custom_conversion();
-    check_basic_conversion();
     check_derived_conversion();
 }

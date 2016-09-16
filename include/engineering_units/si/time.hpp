@@ -34,7 +34,7 @@ namespace engunits
 namespace si
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT( second, s );
+ENGUNITS_DEFINE_ROOT_UNIT( second, s, time );
 ENGUNITS_DEFINE_BASE_UNIT( decisecond,  ds, second, 0.1L );
 ENGUNITS_DEFINE_BASE_UNIT( centisecond, cs, second, 0.01L );
 ENGUNITS_DEFINE_BASE_UNIT( millisecond, ms, second, 0.001L );

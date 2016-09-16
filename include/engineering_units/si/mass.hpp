@@ -34,7 +34,7 @@ namespace engunits
 namespace si
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT( kilogram, kg );
+ENGUNITS_DEFINE_ROOT_UNIT( kilogram, kg, mass );
 ENGUNITS_DEFINE_BASE_UNIT( tonne,      t, kilogram, 1000.0L );
 ENGUNITS_DEFINE_BASE_UNIT( hectogram, hg, kilogram, 0.1L );
 ENGUNITS_DEFINE_BASE_UNIT( decagram, dag, kilogram, 0.01L );

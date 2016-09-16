@@ -24,26 +24,78 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_LENGTH_HPP
-#define ENGINEERING_UNITS_SI_LENGTH_HPP
+#ifndef ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP
+#define ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP
 
-#include <engineering_units/unit/helper_macros.hpp>
 
 namespace engunits
 {
-namespace si
+
+namespace detail
 {
 
-ENGUNITS_DEFINE_ROOT_UNIT( meter, m, length );
-ENGUNITS_DEFINE_BASE_UNIT( decimeter,  dm, meter, 0.1L );
-ENGUNITS_DEFINE_BASE_UNIT( centimeter, cm, meter, 0.01L );
-ENGUNITS_DEFINE_BASE_UNIT( millimeter, mm, meter, 0.001L );
-ENGUNITS_DEFINE_BASE_UNIT( decameter, dam, meter, 10.0L );
-ENGUNITS_DEFINE_BASE_UNIT( hectometer, hm, meter, 100.0L );
-ENGUNITS_DEFINE_BASE_UNIT( kilometer,  km, meter, 1000.0L );
-ENGUNITS_IMPORT_OPERATORS
+
+/**
+ * @internal
+ * @brief compute @p base raised to @p num
+ */
+constexpr long double constexpr_pow( long double base,
+                                     std::intmax_t num )
+{
+    if ( num < 0 )
+    {
+        return constexpr_pow( 1.0L / base, -num );
+    }
+
+    long double y = 1.0L;
+
+    for ( std::intmax_t i = 0; i < num; ++i )
+    {
+        y = y * base;
+    }
+
+    return y;
+}
+
+/**
+ * @internal
+ * @brief compute @p base raised to @p num / @p den
+ * @note This is moderately sensitive to rounding error, for best results use
+ *  co-prime @p num @p den.
+ */
+constexpr long double constexpr_pow( long double base,
+                                     std::intmax_t num,
+                                     std::intmax_t den )
+{
+    if ( den < 0 )
+    {
+        return constexpr_pow( 1.0L / base, num, -den );
+    }
+
+    long double y = constexpr_pow( base, num );
+
+    if ( den == 1 )
+    {
+        return y;
+    }
+
+    // Solve x^den == y
+    long double x = 1.0;
+
+    for ( int i = 0; i < 1000; ++i )
+    {
+        const long double delta = ( y / constexpr_pow( x, den-1 ) - x ) / den;
+
+        if ( x + delta == x )
+            break;
+
+        x += delta;
+    }
+
+    return x;
+}
 
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_LENGTH_HPP
+#endif //ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP

@@ -42,9 +42,9 @@ namespace detail
 
 template<class T, class U>
 struct can_simplify : 
-    base_unit_conversion_exists<
-        typename unit_traits<T>::base,
-        typename unit_traits<U>::base
+    std::is_same<
+        typename T::dimension_tag,
+        typename U::dimension_tag
     > {};
 
 template<class T, class U>
@@ -73,17 +73,15 @@ private:
 struct simplify_strategy
 {
     template<class Lhs, class Rhs>
-    static constexpr auto get_conversion_factor( Lhs const & lhs, Rhs const & rhs )
+    static constexpr auto get_conversion_factor( Lhs const &, Rhs const & rhs )
     {
         // Get rhs exponent
         using rhs_exponent = typename unit_traits<Rhs>::exponent;
         
-        using lhs_base = typename unit_traits<Lhs>::base;
-        using rhs_base = typename unit_traits<Rhs>::base;
-    
-        // Convert rhs from its own base to lhs base.
-        return pow_ratio( base_unit_conversion( rhs_base{}, lhs_base{} ),
-                          rhs_exponent::num, rhs_exponent::den );
+        using new_unit = typename unit_traits<Lhs>::template 
+            base_< rhs_exponent::num, rhs_exponent::den >;
+            
+        return convert_base_unit( rhs, new_unit{} );
     }
 
     template<class ... Ts, class ... Us>

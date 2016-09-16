@@ -34,7 +34,8 @@
 
 #include <engineering_units/detail/string_literal.hpp>
 
-#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol)                     \
+#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, tag)                \
+    struct tag{};                                                   \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
     struct name##_                                                  \
     {                                                               \
@@ -43,6 +44,7 @@
         {                                                           \
             return engunits::detail::make_string_literal(#symbol);  \
         }                                                           \
+        typedef tag dimension_tag;                                  \
     };                                                              \
     using name = name##_<1>
 
@@ -56,15 +58,11 @@
         {                                                            \
             return engunits::detail::make_string_literal(#symbol);   \
         }                                                            \
-        typedef parent root_unit;                                    \
+        typedef parent parent_unit;                                  \
+        typedef typename parent::dimension_tag dimension_tag;        \
+        static constexpr long double to_parent = conv_factor;        \
     };                                                               \
-    using name = name##_<1>;                                         \
-    constexpr long double custom_conversion( name const & from,      \
-                                             parent const & to )     \
-    {                                                                \
-        return conv_factor;                                          \
-    }                                                                \
-    static_assert(true, "")
+    using name = name##_<1>
 
 #define ENGUNITS_DEFINE_DERIVED_UNIT(name, symbol, ...)             \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
