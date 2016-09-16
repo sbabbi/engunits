@@ -82,7 +82,7 @@ constexpr long double constexpr_pow( long double base,
     // Solve x^den == y
     long double x = 1.0;
 
-    for ( int i = 0; i < 1000; ++i )
+    for ( int i = 0; i < 2048; ++i )
     {
         const long double delta = ( y / constexpr_pow( x, den-1 ) - x ) / den;
 

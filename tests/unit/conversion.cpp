@@ -32,7 +32,7 @@
 #include <engineering_units/si/force.hpp>
 #include <engineering_units/imperial/length.hpp>
 
-void check_derived_conversion()
+void test_derived_conversion()
 {
     namespace si = engunits::si;
     namespace imperial = engunits::imperial;
@@ -49,5 +49,5 @@ void check_derived_conversion()
 
 int main()
 {
-    check_derived_conversion();
+    test_derived_conversion();
 }
