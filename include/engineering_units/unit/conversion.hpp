@@ -71,8 +71,8 @@ constexpr auto do_simplify( Lhs const & lhs,
 }
 
 template<class Lhs, class Rhs>
-constexpr auto conversion_factor_helper( Lhs const & lhs,
-                                         Rhs const & rhs )
+constexpr auto conversion_factor_helper( Lhs const &,
+                                         Rhs const & )
 {
     return do_simplify( unit_traits<Lhs>::flat(),
                         unit_traits<Rhs>::flat() );

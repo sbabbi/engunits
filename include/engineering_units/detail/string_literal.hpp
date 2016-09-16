@@ -42,7 +42,7 @@ struct string_literal
 {
     string_literal( const char( &x )[N+1] ) : v_ {}
     {
-        for ( int i = 0; i < N; ++i )
+        for ( std::size_t i = 0; i < N; ++i )
             v_[i] = x[i];
 
         v_[N] = 0;

@@ -39,14 +39,14 @@ namespace detail
 
 /**
  * @internal
- * @brief Checks if @p el is contained inside @p seq
+ * @brief Checks if an element is contained inside a sequence
  * @tparam Sequence A class template that models a sequence.
  */
 template<template<class ... > class Sequence,
          class ... Ts,
          class T>
-constexpr bool contains( Sequence<Ts...> const & seq,
-                         const T & el )
+constexpr bool contains( Sequence<Ts...> const &,
+                         const T & )
 {
     return any_of( std::is_same<Ts, T>::value ... );
 }

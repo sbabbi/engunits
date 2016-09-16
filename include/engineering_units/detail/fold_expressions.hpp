@@ -102,7 +102,7 @@ constexpr auto concatenate( T const & sep, Head && head, Last && last )
 }
 
 template<class T, class Head, class Last>
-constexpr auto concatenate( T const & sep, Head && head )
+constexpr auto concatenate( T const &, Head && head )
 {
     return std::forward<Head>( head );
 }

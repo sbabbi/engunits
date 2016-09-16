@@ -40,8 +40,8 @@ namespace detail
 {
 
 template<class Lhs, class Rhs>
-constexpr bool flat_equal( const Lhs & lhs, 
-                           const Rhs & rhs)
+constexpr bool flat_equal( const Lhs &, 
+                           const Rhs &)
 {
     static_assert( is_unit_v<Lhs> && is_unit_v<Rhs>, "");
     
@@ -60,7 +60,7 @@ constexpr bool flat_equal( const mixed_unit<Lhs...> &,
 }
 
 template<class Lhs>
-constexpr bool flat_equal( const Lhs & lhs, 
+constexpr bool flat_equal( const Lhs &, 
                            const dimensionless &)
 {
     return false;
@@ -121,7 +121,7 @@ constexpr bool operator!=( const mixed_unit<Lhs...> & lhs,
 }
 
 template<class Lhs, class ... Rhs>
-constexpr bool operator==( const Lhs & lhs,
+constexpr bool operator==( const Lhs &,
                            const mixed_unit<Rhs...> & rhs )
 {
     return detail::flat_equal( rhs.flat(),
@@ -171,7 +171,7 @@ template<class Lhs,
 constexpr std::enable_if_t<
     engunits::is_unit_v<Lhs> && 
     engunits::is_unit_v<Rhs>,
-    bool> operator==( const Lhs & lhs, const Rhs & rhs)
+    bool> operator==( const Lhs &, const Rhs &)
 {
     return detail::flat_equal(
         unit_traits<Lhs>::flat(),

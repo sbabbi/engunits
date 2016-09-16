@@ -134,7 +134,7 @@ struct simplify_strategy
     }
     
     template<class Lhs, class Rhs>
-    static constexpr auto join( Lhs const & lhs, Rhs const & rhs, std::false_type )
+    static constexpr auto join( Lhs const &, Rhs const &, std::false_type )
     {
         return conversion_factor_with_unit<Lhs, Rhs>();
     }
