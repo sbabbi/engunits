@@ -37,6 +37,11 @@ namespace engunits
 namespace imperial
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_DERIVED_UNIT( knot, knot, nautical_mile, hour_<-1> );
 ENGUNITS_IMPORT_OPERATORS
 
@@ -46,6 +51,8 @@ namespace literals
 ENGUNITS_DEFINE_UDL( knot, kts )
 
 }
+
+/** @} */
 
 }
 }

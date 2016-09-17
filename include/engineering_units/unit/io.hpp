@@ -37,7 +37,7 @@ namespace engunits
 {
 
 /**
- * @ingroup operators
+ * @addtogroup operators
  * @{
  */
 template<class U>

@@ -32,6 +32,11 @@
 namespace engunits
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_ROOT_UNIT( second, s, time );
 ENGUNITS_DEFINE_BASE_UNIT( decisecond,  ds, second, 0.1L );
 ENGUNITS_DEFINE_BASE_UNIT( centisecond, cs, second, 0.01L );
@@ -47,6 +52,8 @@ ENGUNITS_DEFINE_UDL( second, s )
 }
 
 ENGUNITS_IMPORT_OPERATORS
+
+/** @} */
 
 }
 

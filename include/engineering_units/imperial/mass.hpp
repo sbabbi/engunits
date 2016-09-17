@@ -36,6 +36,11 @@ namespace engunits
 namespace imperial
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_BASE_UNIT( pound, lb, si::kilogram, 0.45359237L );
 ENGUNITS_DEFINE_BASE_UNIT( slug, slug, pound,  32.174049L );
 
@@ -48,6 +53,8 @@ ENGUNITS_DEFINE_UDL( pound, lb )
 ENGUNITS_DEFINE_UDL( slug, slug )
 
 }
+
+/** @} */
 
 }
 }

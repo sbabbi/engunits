@@ -91,7 +91,7 @@ constexpr bool flat_equal( const mixed_unit<Lhs...> & lhs,
 }
 
 /**
- * @ingroup operators
+ * @addtogroup operators
  * @{
  */
 

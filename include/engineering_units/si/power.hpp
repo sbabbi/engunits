@@ -36,6 +36,11 @@ namespace engunits
 namespace si
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_DERIVED_UNIT( watt, W, joule, second_<-1> );
 ENGUNITS_DEFINE_DERIVED_UNIT( deciwatt,  dW, decijoule, second_<-1> );
 ENGUNITS_DEFINE_DERIVED_UNIT( centiwatt, cW, centijoule, second_<-1> );
@@ -52,6 +57,8 @@ namespace literals
 ENGUNITS_DEFINE_UDL( watt, W )
 
 }
+
+/** @} */
 
 }
 }

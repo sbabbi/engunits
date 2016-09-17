@@ -36,6 +36,11 @@ namespace engunits
 namespace imperial
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_BASE_UNIT( foot, ft, si::meter, 0.3048L );
 ENGUNITS_DEFINE_BASE_UNIT( inch, in, foot, ( 1.0L / 12.0L ) );
 
@@ -50,6 +55,7 @@ ENGUNITS_DEFINE_UDL( nautical_mile, NM )
 
 }
 
+/** @} */
 }
 }
 

@@ -65,6 +65,49 @@ using unit_type_t = typename unit_type<Ts...>::type;
 
 }
 
+/**
+ * @brief Tag a type @p T with a (list of) unit.
+ * @tparam T Type to hold
+ * @tparam Units List of units.
+ * 
+ * This is the main class used to attach dimensional information to a value.
+ * Common mathematical operators are overloaded to implement the actual
+ * dimensional analysis, and forward to the relative operator of @p T to 
+ * compute the numerical value.
+ * 
+ * While @p T is usually a numerical type, @c quantity supports any kind of type,
+ * so quantities of `vector`, `string`, `matrix`, etc. are allowed.
+ * 
+ * @note Quantities of compatible but different units 
+ *          (meters and millimeters, kilos and tonnes, etc.) are not implicitly convertible.
+ *       You have to use the explicit constructors of @c quantity, or @c quantity_cast
+ * 
+ * @note @c mixed_unit is not allowed into @p Units
+ * 
+ * Example:
+ * @code{.cpp}
+ *   quantity<double, si::meter> x = 3.0_m;
+ *   quantity<double, si::meter> y = 3.0_m + x; // y == 6.0_m
+ * 
+ *   quantity<double, second> z = 51.2_s;
+ *   
+ *   // error: adding meters and seconds
+ *   x + z;
+ * 
+ *   // ok:
+ *   quantity<double, si::meter, second_<-1> > v = x / z;
+ * 
+ *   // bad: implicit conversion
+ *   quantity<double, si::meter> q = 1.0_ft;
+ * 
+ *   // ok: explicit conversion
+ *   quantity<double, si::meter> q (1.0_ft);
+ * 
+ * @endcode
+ * 
+ * @sa make_quantity
+ * @sa quantity_cast
+ */
 template<class T, class ... Units>
 class quantity
 {
@@ -113,6 +156,12 @@ public:
     
     /**
      * @brief Construct with a value
+     * 
+     * This is the constructor used to insert external data into a quantity.
+     * 
+     * @code{.cpp}
+     *    quantity<double, si::meter> x (32.0); // 32 meters
+     * @endcode
      */
     template<class U>
     explicit constexpr quantity( U && other,
@@ -187,6 +236,9 @@ public:
         value_( std::move(other.value()) * conversion_factor( other.unit(), unit() ) )
     {}
     
+    /**
+     * @brief Copy-assignment
+     */
     constexpr quantity& operator=(const quantity & other)
         noexcept( std::is_nothrow_copy_assignable<T>::value )
     {
@@ -194,6 +246,9 @@ public:
         return *this;
     }
     
+    /**
+     * @brief Move-assignment
+     */
     constexpr quantity& operator=(quantity && other)
         noexcept( std::is_nothrow_move_assignable<T>::value )
     {
@@ -261,14 +316,26 @@ private:
     T value_;
 };
 
-template<class T, class ... Us>
-constexpr auto make_quantity( T && t, mixed_unit<Us...> const & )
-{
-    return quantity< std::remove_reference_t<T>, Us ... >( 
-        std::forward<T>(t)
-    );
-}
-
+/**
+ * @brief Helper function to construct a quantity.
+ * @relates quantity
+ * 
+ * This can be used to construct a quantity inline, example:
+ * 
+ * @code{.cpp}
+ *   auto x = make_quantity( 3.0, si::meter(), si::second_<-1>()); // 3 mps
+ * @endcode
+ * 
+ * It is usually more expressive to use the multiplication operator defined for units,
+ * like:
+ * 
+ * @code{.cpp}
+ * 
+ *   auto x = 3.0 * si::meter() * si::second_<-1>(); // 3mps
+ * 
+ * @endcode
+ * 
+ */
 template<class T, class U>
 constexpr auto make_quantity( T && t, U const & )
 {
@@ -277,18 +344,57 @@ constexpr auto make_quantity( T && t, U const & )
     );
 }
 
-template<class ... To, class T, class ... Ts>
-constexpr auto quantity_cast( const quantity<T, Ts ... > & u )
+template<class T, class ... Us>
+constexpr auto make_quantity( T && t, mixed_unit<Us...> const & )
 {
-    auto unit = detail::multiply( dimensionless(), To() ... );
-    return make_quantity( u.value() * conversion_factor( u.unit(), unit ),
-                          unit );
+    return quantity< std::remove_reference_t<T>, Us ... >( 
+        std::forward<T>(t)
+    );
 }
 
 template<class T>
 constexpr auto make_quantity( T && t, dimensionless const & )
 {
     return std::forward<T>(t);
+}
+
+/**
+ * @brief Explicit cast between convertible quantities.
+ * @relates quantity
+ * 
+ * This function can be used to perform a unit conversion.
+ 
+ * @code{.cpp}
+ *    auto y = 3.0_m;
+ *    quantity< double, imperial::feet > x;
+ * 
+ *    x = quantity_cast< si::meter >(x); // multiplies the payload by the conversion factor
+ *    
+ *    // also possible:
+ *    x = quantity<double, si::meter>(x);
+ *
+ *    // for multiple units:
+ *    auto z = quantity_cast<double, si::meter, si::seconds_<-1> >(v);
+ *
+ *
+ * @endcode
+ * 
+ * The list of destination units can also be empty. This is allowed
+ * if the argument is dimensionless, but has a unit payload. Example:
+ *
+ * @code{.cpp}
+ *     double x = 3.0_m / 1.0_ft; // Bad, implicit unit conversion are never allowed!
+ *
+ *     double x = quantity_cast(3.0_m / 1.0_ft); // ok, multiplies the payload by the conversion factor.
+ * @endcode
+ * 
+ */
+template<class ... To, class T, class ... Ts>
+constexpr auto quantity_cast( const quantity<T, Ts ... > & u )
+{
+    auto unit = detail::multiply( dimensionless(), To() ... );
+    return make_quantity( u.value() * conversion_factor( u.unit(), unit ),
+                          unit );
 }
 
 namespace detail
@@ -375,6 +481,11 @@ constexpr auto dispatch_div( const quantity<Lhs, LhsUnits ... > & lhs,
 }
 }
 
+/**
+ * @addtogroup operators
+ * @{
+ * 
+ */
 template<class Rhs,
          class ... RhsUnits>
 constexpr auto operator+( const quantity<Rhs, RhsUnits ... > & rhs )
@@ -722,6 +833,8 @@ constexpr auto hypot( const quantity<T, TsUnits ... > & x,
     return make_quantity( hypot(x.value(), y.value(), z.value()),
                           x.unit() );
 }
+
+/** @} */
 
 }
 

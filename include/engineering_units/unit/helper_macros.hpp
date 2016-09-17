@@ -35,10 +35,13 @@
 
 #include <engineering_units/detail/string_literal.hpp>
 
-/** @file */
-
 namespace engunits
 {
+    
+/**
+ * @defgroup macros Macros
+ * @{
+ */
 
 /**
  * @def ENGUNITS_DEFINE_UDL(name, symbol)
@@ -174,7 +177,7 @@ namespace engunits
  * this macro, one must use @c ENGUNITS_DEFINE_DERIVED_UNIT.
  * 
  */
-#define ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)    \
+#define ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)   \
     template<std::intmax_t Num, std::intmax_t Den> class name##_;   \
     using name = name##_<1>
 
@@ -218,11 +221,13 @@ namespace engunits
  */
 #define ENGUNITS_DEFINE_DERIVED_UNIT(name, sym, ...)                \
     template<std::intmax_t Num, std::intmax_t Den>                  \
-    using name##__ =  __VA_ARGS__;                                  \
+    class name##_;                                                  \
     using name = name##_<1>
 
 #endif //ENGUNITS_DOXYGEN
     
 }
+
+/** @} */
 
 #endif //ENGINEERING_UNITS_UNIT_HELPER_MACROS_HPP

@@ -30,6 +30,7 @@
 /**
  * @defgroup metafunctions Metafunctions
  * @defgroup operators Operators and functions
+ * @defgroup predef_units Predefined units
  */
 
 // Hide all the sfinae magic from doxygen.

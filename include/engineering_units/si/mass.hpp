@@ -34,6 +34,11 @@ namespace engunits
 namespace si
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_ROOT_UNIT( kilogram, kg, mass );
 ENGUNITS_DEFINE_BASE_UNIT( tonne,      t, kilogram, 1000.0L );
 ENGUNITS_DEFINE_BASE_UNIT( hectogram, hg, kilogram, 0.1L );
@@ -52,6 +57,8 @@ ENGUNITS_DEFINE_UDL( gram, g )
 }
 
 ENGUNITS_IMPORT_OPERATORS
+
+/** @} */
 
 }
 }

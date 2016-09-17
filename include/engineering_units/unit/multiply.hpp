@@ -229,9 +229,11 @@ using multiply_result_t = typename multiply_result<Lhs, Rhs>::type;
 }
 
 /**
- * @ingroup operators
+ * @addtogroup operators
  * @{
- * 
+ */
+
+/**
  * @brief Multiplies two units
  * 
  * This function participates in the overload resolution only if

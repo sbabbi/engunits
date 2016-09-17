@@ -101,7 +101,7 @@ constexpr bool is_unit_or_dimensionless_v =
 }
 
 /**
- * @ingroup metafunctions
+ * @addtogroup metafunctions
  * @{
  */
 

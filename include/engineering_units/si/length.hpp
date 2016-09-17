@@ -28,11 +28,17 @@
 #define ENGINEERING_UNITS_SI_LENGTH_HPP
 
 #include <engineering_units/unit/helper_macros.hpp>
+#include <engineering_units/unit/concepts.hpp>
 
 namespace engunits
 {
 namespace si
 {
+
+/**
+ * @addtogroup predef_units
+ * @{
+ */
 
 ENGUNITS_DEFINE_ROOT_UNIT( meter, m, length );
 ENGUNITS_DEFINE_BASE_UNIT( decimeter,  dm, meter, 0.1L );
@@ -41,6 +47,7 @@ ENGUNITS_DEFINE_BASE_UNIT( millimeter, mm, meter, 0.001L );
 ENGUNITS_DEFINE_BASE_UNIT( decameter, dam, meter, 10.0L );
 ENGUNITS_DEFINE_BASE_UNIT( hectometer, hm, meter, 100.0L );
 ENGUNITS_DEFINE_BASE_UNIT( kilometer,  km, meter, 1000.0L );
+
 
 namespace literals
 {
@@ -52,6 +59,8 @@ ENGUNITS_DEFINE_UDL( kilometer, km )
 }
 
 ENGUNITS_IMPORT_OPERATORS
+
+/** @} */
 
 }
 }

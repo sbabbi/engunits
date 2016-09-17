@@ -59,9 +59,11 @@ using pow_t = typename pow<Base, Exponent>::type;
 }
 
 /**
- * @ingroup operators
+ * @addtogroup operators
  * @{
- * 
+ */
+
+/**
  * @brief Raise a unit @p Base to a power @p Exponent
  * @tparam Base a model of @ref Unit
  * @tparam Exponent a specialization of `std::ratio`

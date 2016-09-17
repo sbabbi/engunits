@@ -36,6 +36,11 @@
 namespace engunits
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_ROOT_UNIT( radian, rad, angle );
 ENGUNITS_DEFINE_BASE_UNIT( degree, deg, radian, 0.017453292519943295088125L);
 ENGUNITS_DEFINE_BASE_UNIT( gradian, gon, radian, 0.015707963267948965580329L);
@@ -50,6 +55,8 @@ ENGUNITS_DEFINE_UDL( degree, deg )
 }
 
 ENGUNITS_IMPORT_OPERATORS
+
+/** @} */
 
 template<class T>
 constexpr auto sin( const quantity<T, radian > & x )

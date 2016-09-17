@@ -37,6 +37,11 @@ namespace engunits
 namespace si
 {
 
+/**
+ * @addtogroup predef_units
+ * @{
+ */
+
 ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, newton, meter  );
 ENGUNITS_DEFINE_DERIVED_UNIT( decijoule,  dJ, newton, decimeter );
 ENGUNITS_DEFINE_DERIVED_UNIT( centijoule, cJ, newton, centimeter );
@@ -55,6 +60,8 @@ namespace literals
 ENGUNITS_DEFINE_UDL( joule, J )
 
 }
+
+/** @} */
 
 }
 }

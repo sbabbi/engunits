@@ -34,7 +34,7 @@ namespace engunits
 {
     
 /**
- * @ingroup metafunctions
+ * @addtogroup metafunctions
  * @{
  */
 
@@ -60,13 +60,10 @@ using is_same_base =
 template<class Lhs, class Rhs>
 constexpr bool is_same_base_v = is_same_base<Lhs, Rhs>::value;
 
-/** @} */
-
 
 #ifdef ENGUNITS_DOXYGEN
 
 /**
- * @ingroup metafunctions
  * @brief Check if @p T is a unit
  * @note This simply inspects @p T for a member typedef @c unit_tag
  */    

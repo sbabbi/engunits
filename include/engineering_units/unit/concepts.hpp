@@ -32,12 +32,8 @@
 #include <engineering_units/detail/doxygen.hpp>
 
 /**
- * @file
- * @note This file is only for reference, it is not compiled.
- */
-
-/**
  * @defgroup Concepts Concepts
+ * @{
  */
 
 namespace engunits
@@ -45,7 +41,6 @@ namespace engunits
 
 /**
  * @defgroup Unit Unit
- * @ingroup Concepts
  * @{
  *
  * @par Description
@@ -99,7 +94,6 @@ namespace engunits
 
 /**
  * @defgroup BaseUnit BaseUnit
- * @ingroup Concepts
  * @{
  * 
  * @par Description
@@ -135,7 +129,6 @@ namespace engunits
 
 /**
  * @defgroup DerivedUnit DerivedUnit
- * @ingroup Concepts
  * @{
  * 
  * @par Description
@@ -171,6 +164,7 @@ namespace engunits
  * @}
  */
 
+/** @} */
 }
 
 
