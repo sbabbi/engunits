@@ -104,16 +104,16 @@ void test_is_convertible()
     
     static_assert( 
         is_convertible( degree() * second() * si::meter() * si::kilogram(),
-                        radian() * minute() * imperial::feet() * imperial::pound() ),
+                        radian() * minute() * imperial::foot() * imperial::pound() ),
         "deg s m kg is convertible to rad min ft lb" );
     
     static_assert( 
         !is_convertible( degree() * second() * si::meter() * si::kilogram(),
-                         radian_<-1>() * minute() * imperial::feet() * imperial::pound() ),
+                         radian_<-1>() * minute() * imperial::foot() * imperial::pound() ),
         "deg s m kg is NOT convertible to rad^-1 min ft lb" );
 
     static_assert( 
-        is_convertible( imperial::pound_force() * imperial::feet(),
+        is_convertible( imperial::pound_force() * imperial::foot(),
                         si::joule() ),
         "lbf ft is convertible to joule" );
     
@@ -130,23 +130,23 @@ void test_base_conversion()
     static_assert( conversion_factor(si::meter(), si::meter() ) == 1.0L,
                    "meter to meter = 1.0 " );
     
-    static_assert( conversion_factor(imperial::feet(), si::meter() ) == 0.3048L,
+    static_assert( conversion_factor(imperial::foot(), si::meter() ) == 0.3048L,
                    "feet to meter = 0.3048L " );
     
-    static_assert( conversion_factor(si::meter(), imperial::feet() ) == 
+    static_assert( conversion_factor(si::meter(), imperial::foot() ) == 
                    (1.0L / 0.3048L),
                    "meter to feet = 1.0 / 3048L " );
     
-    static_assert( conversion_factor(si::meter_<-1>(), imperial::feet_<-1>() ) == 
+    static_assert( conversion_factor(si::meter_<-1>(), imperial::foot_<-1>() ) == 
                    1.0L / (1.0L / 0.3048L),
                    "meter^-1 to feet^-1 = 0.3048L" );
 
     
-    static_assert( conversion_factor(imperial::inch(), imperial::feet() ) == 
+    static_assert( conversion_factor(imperial::inch(), imperial::foot() ) == 
                     (1.0L / 12.0L),
                    "inch to feet = 1.0 / 12.0L" );
     
-    static_assert( conversion_factor(imperial::feet(), imperial::inch() ) == (12.0L),
+    static_assert( conversion_factor(imperial::foot(), imperial::inch() ) == (12.0L),
                    "feet to inch = 12.0L" );
     
     static_assert( conversion_factor(imperial::inch(), si::meter() ) == 
@@ -170,21 +170,21 @@ void test_base_conversion()
     static_assert( conversion_factor(si::meter_<2>(), si::meter_<2>() ) == 1.0L,
                    "meter^2 to meter^2 = 1.0 " );
     
-    static_assert( conversion_factor(imperial::feet_<2>(), si::meter_<2>() ) == 
+    static_assert( conversion_factor(imperial::foot_<2>(), si::meter_<2>() ) == 
                    0.3048L * 0.3048L,
                    "feet to meter = 0.3048L * 0.3048L " );
     
-    static_assert( conversion_factor(si::meter_<3>(), imperial::feet_<3>() ) == 
+    static_assert( conversion_factor(si::meter_<3>(), imperial::foot_<3>() ) == 
                    (1.0L / 0.3048L) * (1.0L / 0.3048L) * (1.0L / 0.3048L),
                    "meter to feet = (1.0 / 3048L) ^3  " );
     
-    static_assert( conversion_factor(imperial::inch_<-1>(), imperial::feet_<-1>() ) == 
+    static_assert( conversion_factor(imperial::inch_<-1>(), imperial::foot_<-1>() ) == 
                    1.0L / (1.0L / 12.0L),
                    "inch^-1 to feet^-1 = 12.0L" );
     
     static_assert( 
-        double( conversion_factor(imperial::feet_<1,2>(), imperial::inch_<1,2>() ) *
-                conversion_factor(imperial::feet_<1,2>(), imperial::inch_<1,2>() ) ) == 
+        double( conversion_factor(imperial::foot_<1,2>(), imperial::inch_<1,2>() ) *
+                conversion_factor(imperial::foot_<1,2>(), imperial::inch_<1,2>() ) ) == 
         double( 12.0L ),
         "(feet^(1/2) to inch^(1/2) )^2 = 12.0L" );
     
@@ -253,7 +253,7 @@ void test_derived_conversion()
     static_assert( 
         double(conversion_factor( 
             degree() * second() * si::meter() * si::kilogram(),
-            radian() * minute() * imperial::feet() * imperial::pound() )
+            radian() * minute() * imperial::foot() * imperial::pound() )
         ) ==
         double( (0.017453292519943295088125L) *
                 (1.0L / 60.0L) *
@@ -263,7 +263,7 @@ void test_derived_conversion()
         "deg s m kg to rad min ft lb" );
     
     static_assert( 
-        double( conversion_factor( imperial::pound_force() * imperial::feet(),
+        double( conversion_factor( imperial::pound_force() * imperial::foot(),
                                    si::joule() ) ) ==
         double( 32.174049L * 0.45359237L * 0.3048L * 0.3048L ), 
         "lbf ft to joule" );

@@ -49,6 +49,8 @@ ENGUNITS_DEFINE_DERIVED_UNIT( erg, erg, dyne, centimeter  );
 ENGUNITS_DEFINE_DERIVED_UNIT( kilowatt_hour, kWh, newton, kilometer, hour, second_<-1> );
 ENGUNITS_IMPORT_OPERATORS
 
+ENGUNITS_DEFINE_UDL( joule, J )
+
 }
 }
 

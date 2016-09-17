@@ -43,6 +43,8 @@ ENGUNITS_DEFINE_BASE_UNIT( decigram,  dg, kilogram, 0.0001L );
 ENGUNITS_DEFINE_BASE_UNIT( centigram, cg, kilogram, 0.00001L );
 ENGUNITS_DEFINE_BASE_UNIT( milligram, mg, kilogram, 0.000001L );
 
+ENGUNITS_DEFINE_UDL( kilogram, kg )
+ENGUNITS_DEFINE_UDL( gram, g )
 
 ENGUNITS_IMPORT_OPERATORS
 

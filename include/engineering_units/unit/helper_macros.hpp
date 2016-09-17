@@ -29,8 +29,9 @@
 
 #include <ratio>
 
-#include <engineering_units/unit/equality.hpp>
-#include <engineering_units/unit/multiply.hpp>
+#include <engineering_units/quantity.hpp>
+
+#include <engineering_units/unit/traits.hpp>
 
 #include <engineering_units/detail/string_literal.hpp>
 
@@ -38,6 +39,12 @@
 
 namespace engunits
 {
+
+#define ENGUNITS_DEFINE_UDL(name, symbol)       \
+    auto operator "" _##symbol(long double x)   \
+    {                                           \
+        return quantity<long double, name>(x);  \
+    }
 
 /**
  * @def ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)
@@ -74,7 +81,8 @@ namespace engunits
         }                                                           \
         typedef dimension dimension_tag;                            \
     };                                                              \
-    using name = name##_<1>
+    using name = name##_<1>;                                        \
+
 
 
 #define ENGUNITS_DEFINE_BASE_UNIT(name, symbol, parent, conv_factor) \

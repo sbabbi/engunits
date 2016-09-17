@@ -46,6 +46,8 @@ ENGUNITS_DEFINE_DERIVED_UNIT( kilowatt,  kW, kilojoule, second_<-1> );
 
 ENGUNITS_IMPORT_OPERATORS
 
+ENGUNITS_DEFINE_UDL( watt, W )
+
 }
 }
 

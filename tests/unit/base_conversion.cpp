@@ -39,18 +39,18 @@ void test_convert_base_unit()
     static_assert( convert_base_unit(si::meter(), si::meter() ) == 1.0L,
                    "meter to meter = 1.0 " );
     
-    static_assert( convert_base_unit(imperial::feet(), si::meter() ) == 0.3048L,
+    static_assert( convert_base_unit(imperial::foot(), si::meter() ) == 0.3048L,
                    "feet to meter = 0.3048L " );
     
-    static_assert( convert_base_unit(si::meter(), imperial::feet() ) == 
+    static_assert( convert_base_unit(si::meter(), imperial::foot() ) == 
                    (1.0L / 0.3048L),
                    "meter to feet = 1.0 / 3048L " );
     
-    static_assert( convert_base_unit(imperial::inch(), imperial::feet() ) == 
+    static_assert( convert_base_unit(imperial::inch(), imperial::foot() ) == 
                     (1.0L / 12.0L),
                    "inch to feet = 1.0 / 12.0L" );
     
-    static_assert( convert_base_unit(imperial::feet(), imperial::inch() ) == (12.0L),
+    static_assert( convert_base_unit(imperial::foot(), imperial::inch() ) == (12.0L),
                    "feet to inch = 12.0L" );
     
     static_assert( convert_base_unit(imperial::inch(), si::meter() ) == 
@@ -88,21 +88,21 @@ void test_convert_base_unit_exp()
     static_assert( convert_base_unit(si::meter_<2>(), si::meter_<2>() ) == 1.0L,
                    "meter^2 to meter^2 = 1.0 " );
     
-    static_assert( convert_base_unit(imperial::feet_<2>(), si::meter_<2>() ) == 
+    static_assert( convert_base_unit(imperial::foot_<2>(), si::meter_<2>() ) == 
                    0.3048L * 0.3048L,
                    "feet to meter = 0.3048L * 0.3048L " );
     
-    static_assert( convert_base_unit(si::meter_<3>(), imperial::feet_<3>() ) == 
+    static_assert( convert_base_unit(si::meter_<3>(), imperial::foot_<3>() ) == 
                    (1.0L / 0.3048L) * (1.0L / 0.3048L) * (1.0L / 0.3048L),
                    "meter to feet = (1.0 / 3048L) ^3  " );
     
-    static_assert( convert_base_unit(imperial::inch_<-1>(), imperial::feet_<-1>() ) == 
+    static_assert( convert_base_unit(imperial::inch_<-1>(), imperial::foot_<-1>() ) == 
                    1.0L / (1.0L / 12.0L),
                    "inch^-1 to feet^-1 = 12.0L" );
     
     static_assert( 
-        double( convert_base_unit(imperial::feet_<1,2>(), imperial::inch_<1,2>() ) *
-                convert_base_unit(imperial::feet_<1,2>(), imperial::inch_<1,2>() ) ) == 
+        double( convert_base_unit(imperial::foot_<1,2>(), imperial::inch_<1,2>() ) *
+                convert_base_unit(imperial::foot_<1,2>(), imperial::inch_<1,2>() ) ) == 
         double( 12.0L ),
         "(feet^(1/2) to inch^(1/2) )^2 = 12.0L" );
     
