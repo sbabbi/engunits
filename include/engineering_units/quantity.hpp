@@ -110,6 +110,16 @@ public:
         ENGUNITS_ENABLE_IF( std::is_default_constructible<T>::value )
             ) noexcept( std::is_nothrow_default_constructible<T>::value )
     {}
+    
+    /**
+     * @brief Construct with a value
+     */
+    template<class U>
+    explicit constexpr quantity( U && other,
+        ENGUNITS_ENABLE_IF(( std::is_constructible<T, U&&>::value ))
+            ) noexcept( std::is_nothrow_constructible<T, U&&>::value ) :
+        value_( std::forward<U>(other) )
+    {}
 
     /**
      * @brief Copy construct from equivalent unit, and implicitly convertible @c value_type
@@ -243,6 +253,90 @@ constexpr auto make_quantity( T && t, U const & )
     );
 }
 
+namespace detail
+{
+
+template<class Lhs,
+         class Rhs,
+         class ... RhsUnits>
+constexpr auto dispatch_mult( const Lhs & lhs,
+                              const quantity<Rhs, RhsUnits ... > & rhs,
+                              std::true_type /*is_unit<Lhs>*/ )
+{
+    return make_quantity(rhs.value(), lhs * rhs.unit() );
+}
+
+template<class Lhs,
+         class Rhs,
+         class ... RhsUnits>
+constexpr auto dispatch_mult( const Lhs & lhs,
+                              const quantity<Rhs, RhsUnits ... > & rhs,
+                              std::false_type /*is_unit<Lhs>*/ )
+{
+    return make_quantity( lhs * rhs.value(), rhs.unit() );
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs>
+constexpr auto dispatch_mult( const quantity<Lhs, LhsUnits ... > & lhs,
+                              const Rhs & rhs,
+                              std::true_type /*is_unit<Rhs>*/ )
+{
+    return make_quantity(lhs.value(), lhs.unit() * rhs );
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs>
+constexpr auto dispatch_mult( const quantity<Lhs, LhsUnits ... > & lhs,
+                              const Rhs & rhs,
+                              std::false_type /*is_unit<Rhs>*/ )
+{
+    return make_quantity(lhs.value() * rhs, lhs.unit() );
+}
+
+template<class Lhs,
+         class Rhs,
+         class ... RhsUnits>
+constexpr auto dispatch_div( const Lhs & lhs,
+                             const quantity<Rhs, RhsUnits ... > & rhs,
+                             std::true_type /*is_unit<Lhs>*/ )
+{
+    return make_quantity( Rhs(1.0) / rhs.value(), lhs * inverse(rhs.unit()) );
+}
+
+template<class Lhs,
+         class Rhs,
+         class ... RhsUnits>
+constexpr auto dispatch_div( const Lhs & lhs,
+                             const quantity<Rhs, RhsUnits ... > & rhs,
+                             std::false_type /*is_unit<Lhs>*/ )
+{
+    return make_quantity( lhs / rhs.value(), inverse(rhs.unit()) );
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs>
+constexpr auto dispatch_div( const quantity<Lhs, LhsUnits ... > & lhs,
+                             const Rhs & rhs,
+                             std::true_type /*is_unit<Rhs>*/ )
+{
+    return make_quantity(lhs.value(), lhs.unit() * inverse(rhs) );
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs>
+constexpr auto dispatch_div( const quantity<Lhs, LhsUnits ... > & lhs,
+                             const Rhs & rhs,
+                             std::false_type /*is_unit<Rhs>*/ )
+{
+    return make_quantity(lhs.value() / rhs, lhs.unit() );
+}
+}
+
 template<class Rhs,
          class ... RhsUnits>
 constexpr auto operator+( const quantity<Rhs, RhsUnits ... > & rhs )
@@ -258,32 +352,36 @@ constexpr auto operator-( const quantity<Rhs, RhsUnits ... > & rhs )
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator+( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator+ with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator+ with different units" );
     
     return make_quantity( lhs.value() + rhs.value(), lhs.unit() );
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator-( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator- with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator- with different units" );
     
     return make_quantity( lhs.value() - rhs.value(), lhs.unit() );
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator*( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
@@ -293,7 +391,45 @@ constexpr auto operator*( const quantity<Lhs, LhsUnits ... > & lhs,
 
 template<class Lhs,
          class Rhs,
+         class ... RhsUnits>
+constexpr auto operator*( const Lhs & lhs,
+                          const quantity<Rhs, RhsUnits ... > & rhs )
+{    
+    return detail::dispatch_mult( lhs, rhs, is_unit<Lhs>{} );
+}
+
+template<class Lhs,
          class ... LhsUnits,
+         class Rhs>
+constexpr auto operator*( const quantity<Lhs, LhsUnits ... > & lhs,
+                          const Rhs & rhs )
+{    
+    return detail::dispatch_mult( lhs, rhs, is_unit<Rhs>{} );
+}
+
+template<class Lhs,
+         class Rhs>
+constexpr ENGUNITS_ENABLE_IF_T(
+    is_unit_v<Lhs> && !is_unit_v<Rhs>,
+    quantity<Rhs, Lhs>) operator*( const Lhs &,
+                                   const Rhs & rhs )
+{    
+    return quantity<Rhs, Lhs>(rhs);
+}
+
+template<class Lhs,
+         class Rhs>
+constexpr ENGUNITS_ENABLE_IF_T(
+    !is_unit_v<Lhs> && is_unit_v<Rhs>,
+    quantity<Lhs, Rhs>) operator*( const Lhs & lhs,
+                                   const Rhs & )
+{    
+    return quantity<Lhs, Rhs>(lhs);
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator/( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
@@ -304,72 +440,102 @@ constexpr auto operator/( const quantity<Lhs, LhsUnits ... > & lhs,
 
 template<class Lhs,
          class Rhs,
+         class ... RhsUnits>
+constexpr auto operator/( const Lhs & lhs,
+                          const quantity<Rhs, RhsUnits ... > & rhs )
+{    
+    return detail::dispatch_div( lhs, rhs, is_unit<Lhs>{} );
+}
+
+template<class Lhs,
          class ... LhsUnits,
+         class Rhs>
+constexpr auto operator/( const quantity<Lhs, LhsUnits ... > & lhs,
+                          const Rhs & rhs )
+{    
+    return detail::dispatch_div( lhs, rhs, is_unit<Rhs>{} );
+}
+
+template<class Lhs,
+         class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator==( const quantity<Lhs, LhsUnits ... > & lhs,
                            const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator== with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator== with different units" );
     
     return lhs.value() == rhs.value();
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator!=( const quantity<Lhs, LhsUnits ... > & lhs,
                            const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator!= with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator!= with different units" );
     
     return lhs.value() != rhs.value();
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator<( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() < rhs.unit(), "operator< with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator< with different units" );
     
     return lhs.value() < rhs.value();
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator<=( const quantity<Lhs, LhsUnits ... > & lhs,
                            const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator<= with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator<= with different units" );
     
     return lhs.value() <= rhs.value();
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator>( const quantity<Lhs, LhsUnits ... > & lhs,
                           const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator> with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator> with different units" );
     
     return lhs.value() > rhs.value();
 }
 
 template<class Lhs,
-         class Rhs,
          class ... LhsUnits,
+         class Rhs,
          class ... RhsUnits>
 constexpr auto operator>=( const quantity<Lhs, LhsUnits ... > & lhs,
                            const quantity<Rhs, RhsUnits ... > & rhs )
 {
-    static_assert( lhs.unit() == rhs.unit(), "operator>= with different units" );
+    static_assert( quantity<Lhs, LhsUnits ... >::unit() ==
+                   quantity<Rhs, RhsUnits ... >::unit(), 
+                   "operator>= with different units" );
     
     return lhs.value() >= rhs.value();
 }
@@ -400,7 +566,9 @@ constexpr auto fma( const quantity<T, TsUnits ... > & x,
                     const quantity<U, UsUnits ... > & y,
                     const quantity<V, VsUnits ... > & z )
 {
-    static_assert( (x.unit() * y.unit()) == z.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() *
+                   quantity<U, UsUnits ... >::unit() ==
+                   quantity<V, VsUnits ... >::unit(),
                    "fma with incompatible units" );
     
     using std::fma;
@@ -415,9 +583,10 @@ template<class T,
 constexpr auto fmax( const quantity<T, TsUnits ... > & x,
                      const quantity<U, UsUnits ... > & y )
 {
-    static_assert( x.unit() == y.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit(),
                    "fmax with different units" );
-    
+        
     using std::fmax;
     return make_quantity( fmax(x.value(), y.value()), x.unit() );
 }
@@ -429,7 +598,8 @@ template<class T,
 constexpr auto fmin( const quantity<T, TsUnits ... > & x,
                      const quantity<U, UsUnits ... > & y )
 {
-    static_assert( x.unit() == y.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit(),
                    "fmin with different units" );
     
     using std::fmin;
@@ -443,7 +613,8 @@ template<class T,
 constexpr auto fdim( const quantity<T, TsUnits ... > & x,
                      const quantity<U, UsUnits ... > & y )
 {
-    static_assert( x.unit() == y.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit(),
                    "fdim with different units" );
     
     using std::fdim;
@@ -485,7 +656,8 @@ template<class T,
 constexpr auto hypot( const quantity<T, TsUnits ... > & x,
                       const quantity<U, UsUnits ... > & y )
 {
-    static_assert( x.unit() == y.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit(),
                    "hypot with different units" );
     
     using std::hypot;
@@ -502,7 +674,10 @@ constexpr auto hypot( const quantity<T, TsUnits ... > & x,
                       const quantity<U, UsUnits ... > & y,
                       const quantity<V, VsUnits ... > & z )
 {
-    static_assert( x.unit() == y.unit() && y.unit() == z.unit(), 
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit() &&
+                   quantity<T, TsUnits ... >::unit() ==
+                   quantity<V, VsUnits ... >::unit(),
                    "hypot with different units" );
     
     using std::hypot;

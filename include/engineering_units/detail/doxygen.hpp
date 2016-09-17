@@ -46,10 +46,10 @@
         int                     \
     > = 0
 
-#define ENGUNITS_ENABLE_IF_T(C, T)  \
+#define ENGUNITS_ENABLE_IF_T(C, ...)\
     std::enable_if_t<               \
         (C),                        \
-        T                           \
+        __VA_ARGS__                 \
     >
 
 

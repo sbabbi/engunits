@@ -26,4 +26,39 @@
 
 #include <engineering_units/quantity.hpp>
 
+#include <engineering_units/angle.hpp>
+#include <engineering_units/time.hpp>
+#include <engineering_units/si/length.hpp>
+#include <engineering_units/si/mass.hpp>
+#include <engineering_units/si/force.hpp>
+#include <engineering_units/si/energy.hpp>
+#include <engineering_units/si/power.hpp>
+
+namespace si = engunits::si;
+using namespace si::literals;
+using namespace engunits::literals;
+
+void test_addition()
+{
+    static_assert( 1.0_m + 1.0_m == 2.0_m, " 1m + 1m = 2m " );
+    static_assert( 1.0_m - 1.0_m == 0.0_m, " 1m - 1m = 0m " );
+    
+    static_assert( 1.0_N + 1.0_m * 1.0_kg / (1.0_s * 1.0_s) == 2.0_N, 
+                   " 1N + 1m * 1kg / (1s * 1s) = 2N " );
+
+//     static_assert( 1.0_m + 0.0_mm == 0.0_m, " 1m - 1m = 0m " );
+    
+//     static_assert( !check_add_well_formed( 1.0_m, 1.0_s ),
+//                    "Can not add meter and seconds" );
+}
+
+void test_mult()\
+{
+    static_assert( 2.0_m * 2.0_m == 4.0 * si::meter_<2>(), " 2m * 2m = 4m^2 " );
+    
+    static_assert( 4.0_m * 3.0_N / 2.0_s == 6.0_W, " 4m * 3N / 2s  = 6 W " );
+    
+}
+
+
 int main() {}
