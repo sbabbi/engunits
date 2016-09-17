@@ -232,6 +232,30 @@ public:
     {
         return unit_type {};
     }
+    
+    explicit operator const T&() const &
+    {
+        static_assert( is_convertible_v<unit_type, dimensionless>,
+                       "Use .value() to cast away the unit" );
+        
+        return value_ * conversion_factor( unit(), dimensionless() );
+    }
+    
+    explicit operator T&() &
+    {
+        static_assert( is_convertible_v<unit_type, dimensionless>,
+                       "Use .value() to cast away the unit" );
+        
+        return value_ * conversion_factor( unit(), dimensionless() );
+    }
+    
+    explicit operator T&&() &&
+    {
+        static_assert( is_convertible_v<unit_type, dimensionless>,
+                       "Use .value() to cast away the unit" );
+        
+        return std::move(value_) * conversion_factor( unit(), dimensionless() );
+    }
 
 private:
     T value_;
@@ -251,6 +275,20 @@ constexpr auto make_quantity( T && t, U const & )
     return quantity< std::remove_reference_t<T>, U >( 
         std::forward<T>(t)
     );
+}
+
+template<class ... To, class T, class ... Ts>
+constexpr auto quantity_cast( const quantity<T, Ts ... > & u )
+{
+    auto unit = detail::multiply( dimensionless(), To() ... );
+    return make_quantity( u.value() * conversion_factor( u.unit(), unit ),
+                          unit );
+}
+
+template<class T>
+constexpr auto make_quantity( T && t, dimensionless const & )
+{
+    return std::forward<T>(t);
 }
 
 namespace detail
@@ -628,7 +666,7 @@ constexpr auto pow( const quantity<Rhs, RhsUnits ... > & rhs )
 {
     using std::pow;
     return make_quantity( pow(rhs.value(), Exp),
-                          pow(rhs.unit(), std::ratio<Exp>()) );
+                          engunits::pow(rhs.unit(), std::ratio<Exp>()) );
 }
 
 template<class Rhs,
@@ -661,7 +699,7 @@ constexpr auto hypot( const quantity<T, TsUnits ... > & x,
                    "hypot with different units" );
     
     using std::hypot;
-    return make_quantity( hypot(x.value(), y.value()), x.unit() );
+    return make_quantity( hypot(x.value(), y.value() ), x.unit() );
 }
 
 template<class T,

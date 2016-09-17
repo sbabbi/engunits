@@ -69,8 +69,35 @@ template<class Lhs, class Rhs>
 constexpr auto conversion_factor_helper( Lhs const &,
                                          Rhs const & )
 {
-    return do_simplify( unit_traits<Lhs>::flat() * unit_traits<Rhs>::flat() );
+    return do_simplify( inverse(unit_traits<Lhs>::flat()) * 
+                        unit_traits<Rhs>::flat() );
 }
+
+template<class Rhs>
+constexpr auto conversion_factor_helper( dimensionless const &,
+                                         Rhs const & )
+{
+    return do_simplify( unit_traits<Rhs>::flat() );
+}
+
+
+template<class Lhs>
+constexpr auto conversion_factor_helper( Lhs const &,
+                                         dimensionless const & )
+{
+    return do_simplify( unit_traits<Lhs>::flat() );
+}
+    
+constexpr auto conversion_factor_helper( dimensionless const &,
+                                         dimensionless const & )
+{
+    return conversion_factor_with_unit<>();
+}
+
+template<class T>
+constexpr bool is_unit_or_dimensionless_v = 
+    is_unit_v<T> || 
+    std::is_same<T, dimensionless>::value;
 
 }
 
@@ -79,7 +106,7 @@ using is_convertible_t = typename
     std::is_same<
         decltype( 
             detail::conversion_factor_helper( 
-                inverse( std::declval<To const &>() ),
+                std::declval<To const &>(),
                 std::declval<From const &>() )
         ),
         detail::conversion_factor_with_unit<>
@@ -96,7 +123,8 @@ constexpr auto is_convertible(From const &, To const &)
 
 template<class From, class To>
 constexpr std::enable_if_t<
-    is_unit_v<From> && is_unit_v<To>,
+    detail::is_unit_or_dimensionless_v<From> && 
+    detail::is_unit_or_dimensionless_v<To>,
     long double
 > conversion_factor( const From & from,
                      const To & to )
@@ -104,7 +132,7 @@ constexpr std::enable_if_t<
     static_assert( is_convertible_v<From, To>,
                    " Can not convert <from> to <to> ");
 
-    return detail::conversion_factor_helper( inverse(to), from ).factor();
+    return detail::conversion_factor_helper( to, from ).factor();
 }
 
 
