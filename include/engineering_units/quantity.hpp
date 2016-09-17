@@ -27,6 +27,7 @@
 #ifndef ENGINEERING_UNITS_QUANTITY_HPP
 #define ENGINEERING_UNITS_QUANTITY_HPP
 
+#include <cmath>
 #include <type_traits>
 #include <utility>
 
@@ -371,6 +372,142 @@ constexpr auto operator>=( const quantity<Lhs, LhsUnits ... > & lhs,
     static_assert( lhs.unit() == rhs.unit(), "operator>= with different units" );
     
     return lhs.value() >= rhs.value();
+}
+
+template<class Rhs,
+         class ... RhsUnits>
+constexpr auto abs( const quantity<Rhs, RhsUnits ... > & rhs )
+{
+    using std::abs;
+    return make_quantity( abs(rhs.value()), rhs.unit() );
+}
+
+template<class Rhs,
+         class ... RhsUnits>
+constexpr auto fabs( const quantity<Rhs, RhsUnits ... > & rhs )
+{
+    using std::fabs;
+    return make_quantity( fabs(rhs.value()), rhs.unit() );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits,
+         class V,
+         class ... VsUnits>
+constexpr auto fma( const quantity<T, TsUnits ... > & x,
+                    const quantity<U, UsUnits ... > & y,
+                    const quantity<V, VsUnits ... > & z )
+{
+    static_assert( (x.unit() * y.unit()) == z.unit(), 
+                   "fma with incompatible units" );
+    
+    using std::fma;
+    return make_quantity( fma(x.value(), y.value(), z.value()),
+                          z.unit() );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits>
+constexpr auto fmax( const quantity<T, TsUnits ... > & x,
+                     const quantity<U, UsUnits ... > & y )
+{
+    static_assert( x.unit() == y.unit(), 
+                   "fmax with different units" );
+    
+    using std::fmax;
+    return make_quantity( fmax(x.value(), y.value()), x.unit() );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits>
+constexpr auto fmin( const quantity<T, TsUnits ... > & x,
+                     const quantity<U, UsUnits ... > & y )
+{
+    static_assert( x.unit() == y.unit(), 
+                   "fmin with different units" );
+    
+    using std::fmin;
+    return make_quantity( fmin(x.value(), y.value()), x.unit() );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits>
+constexpr auto fdim( const quantity<T, TsUnits ... > & x,
+                     const quantity<U, UsUnits ... > & y )
+{
+    static_assert( x.unit() == y.unit(), 
+                   "fdim with different units" );
+    
+    using std::fdim;
+    return make_quantity( fdim(x.value(), y.value()), x.unit() );
+}
+
+template<std::intmax_t Exp,
+         class Rhs,
+         class ... RhsUnits>
+constexpr auto pow( const quantity<Rhs, RhsUnits ... > & rhs )
+{
+    using std::pow;
+    return make_quantity( pow(rhs.value(), Exp),
+                          pow(rhs.unit(), std::ratio<Exp>()) );
+}
+
+template<class Rhs,
+         class ... RhsUnits>
+constexpr auto sqrt( const quantity<Rhs, RhsUnits ... > & rhs )
+{
+    using std::sqrt;
+    return make_quantity( sqrt(rhs.value()), 
+                          pow(rhs.unit(), std::ratio<1,2>()) );
+}
+
+template<class Rhs,
+         class ... RhsUnits>
+constexpr auto cbrt( const quantity<Rhs, RhsUnits ... > & rhs )
+{
+    using std::cbrt;
+    return make_quantity( cbrt(rhs.value()),
+                          pow(rhs.unit(), std::ratio<1,3>()) );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits>
+constexpr auto hypot( const quantity<T, TsUnits ... > & x,
+                      const quantity<U, UsUnits ... > & y )
+{
+    static_assert( x.unit() == y.unit(), 
+                   "hypot with different units" );
+    
+    using std::hypot;
+    return make_quantity( hypot(x.value(), y.value()), x.unit() );
+}
+
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits,
+         class V,
+         class ... VsUnits>
+constexpr auto hypot( const quantity<T, TsUnits ... > & x,
+                      const quantity<U, UsUnits ... > & y,
+                      const quantity<V, VsUnits ... > & z )
+{
+    static_assert( x.unit() == y.unit() && y.unit() == z.unit(), 
+                   "hypot with different units" );
+    
+    using std::hypot;
+    return make_quantity( hypot(x.value(), y.value(), z.value()),
+                          x.unit() );
 }
 
 }
