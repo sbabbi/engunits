@@ -31,6 +31,7 @@
 
 #include <engineering_units/unit/traits.hpp>
 #include <engineering_units/unit/predicates.hpp>
+#include <engineering_units/unit/pow.hpp>
 
 #include <engineering_units/detail/fold_expressions.hpp>
 
@@ -86,7 +87,7 @@ struct mixed_unit
     
     //TODO: static_assert Ts bases are all different
 
-    static constexpr auto flat()
+    static constexpr auto flat() 
     {
         return detail::multiply( unit_traits<Ts>::flat() ... );
     }
@@ -106,15 +107,18 @@ template< class ... Ts >
 struct unit_traits< mixed_unit<Ts ... > >
 {
     typedef mixed_unit<Ts ... > unit;
-    typedef derived_unit_tag unit_category;
     
     typedef unit base;
 
-    // TODO: implement base_<Num, Den>
-
     typedef std::ratio<1> exponent;
-    
-    // Convert derived units into mixed units.
+
+    typedef derived_unit_tag unit_category;
+
+    template< std::intmax_t N, std::intmax_t D = 1 >
+    using base_ = mixed_unit<
+        detail::pow_t<Ts, std::ratio<N,D> > ...
+    >;
+
     static constexpr auto flat() 
     {
         return unit::flat();

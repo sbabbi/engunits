@@ -103,9 +103,10 @@ namespace engunits
         }                                                           \
         static constexpr auto flat()                                \
         {                                                           \
-            return engunits::unit_traits<                           \
-                engunits::mixed_unit< __VA_ARGS__ >                 \
-            >::flat();                                              \
+            using mixed = engunits::mixed_unit<__VA_ARGS__>;        \
+            using mixed_p = engunits::unit_traits< mixed >::template\
+                base_<Num, Den>;                                    \
+            return engunits::unit_traits< mixed_p >::flat();        \
         }                                                           \
     };                                                              \
     using name = name##_<1> 

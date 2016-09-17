@@ -31,11 +31,33 @@
 #include <type_traits>
 
 #include <engineering_units/unit/traits.hpp>
-#include <engineering_units/unit/mixed_unit.hpp>
 
 namespace engunits
 {
+    
+template<class ... Ts>
+struct mixed_unit;
 
+namespace detail
+{
+
+template<class Base, class Exponent>
+struct pow
+{
+    using result_exp = std::ratio_multiply<
+        typename unit_traits<Base>::exponent,
+        Exponent
+    >;
+
+    typedef typename unit_traits<Base>::template
+        base_< result_exp::num, result_exp::den > type;
+};
+
+template<class Base, class Exponent>
+using pow_t = typename pow<Base, Exponent>::type;
+
+}
+    
 template<class Base, class Exponent>
 constexpr auto pow( const Base &,
                     Exponent,
@@ -44,13 +66,7 @@ constexpr auto pow( const Base &,
                         int
                     > = 0 )
 {
-    using result_exp = std::ratio_multiply<
-                       typename unit_traits<Base>::exponent,
-                       Exponent
-                       >;
-
-    return typename unit_traits<Base>::template
-           base_< result_exp::num, result_exp::den > {};
+    return detail::pow_t<Base, Exponent>{};
 }
 
 template<class ... Ts, class Exponent>
