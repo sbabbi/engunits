@@ -81,7 +81,7 @@ constexpr auto conversion_factor_helper( Lhs const &,
 }
 
 template<class From, class To>
-constexpr bool is_convertible_v = 
+using is_convertible_t = typename
     std::is_same<
         decltype( 
             detail::conversion_factor_helper( 
@@ -89,7 +89,16 @@ constexpr bool is_convertible_v =
                 std::declval<From const &>() )
         ),
         detail::conversion_factor_with_unit<>
-    >::value;
+    >::type;
+
+template<class From, class To>
+constexpr bool is_convertible_v = is_convertible_t<From, To>::value;
+    
+template<class From, class To>
+constexpr auto is_convertible(From const &, To const &)
+{
+    return is_convertible_t<From, To>{};
+}
 
 template<class From, class To>
 constexpr std::enable_if_t<

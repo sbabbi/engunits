@@ -1,6 +1,12 @@
 
 enable_testing()
 
+## quantity
+add_executable( quantity_test quantity.cpp )
+target_link_libraries( quantity_test engineering_units )
+
+add_test( NAME quantity_test COMMAND quantity_test )
+
 ### detail
 
 ## constexpr_pow
