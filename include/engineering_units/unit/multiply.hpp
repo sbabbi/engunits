@@ -205,16 +205,32 @@ constexpr merge_t< mixed_unit,
                    multiply_strategy,
                    can_multiply > multiplies{};
 
+template<class Lhs, class Rhs, class = void>
+struct multiply_result {};
+
+template<class Lhs, class Rhs>
+struct multiply_result<
+    Lhs,
+    Rhs,
+    std::enable_if_t< is_unit_v<Lhs> && is_unit_v<Rhs> >
+>
+{
+    typedef decltype(
+        detail::multiplies( 
+            std::declval<const Lhs &>(),
+            std::declval<const Rhs &>()
+        )
+    ) type;
+};
+
+template<class Lhs, class Rhs>
+using multiply_result_t = typename multiply_result<Lhs, Rhs>::type;
+
 }
 
 template<class Lhs, class Rhs>
-constexpr auto operator* (const Lhs & lhs, const Rhs & rhs) ->
-
-    std::enable_if_t<
-        is_unit_v<Lhs> && 
-        is_unit_v<Rhs>,
-        decltype( detail::multiplies(lhs, rhs) )
-    >
+constexpr ENGUNITS_UNSPECIFIED( detail::multiply_result_t<Lhs, Rhs> ) 
+    operator* (const Lhs & lhs, const Rhs & rhs)
 {
     return detail::multiplies(lhs, rhs);
 }
