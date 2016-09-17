@@ -50,7 +50,7 @@ namespace engunits
  * @def ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)
  * @brief Define a new root unit.
  * @param name The name of the unit.
- * @param symbol Symbol used for printing. 
+ * @param sym Symbol used for printing. 
  *          See @ref engunits::unit_traits::symbol "unit_traits::symbol".
  * @param dimension Name of the associated dimension.
  * 
@@ -69,7 +69,7 @@ namespace engunits
  *   - An alias @p name for @p name_<1> 
  * 
  */
-#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)          \
+#define ENGUNITS_DEFINE_ROOT_UNIT(name, sym, dimension)             \
     struct dimension{};                                             \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
     struct name##_                                                  \
@@ -77,7 +77,7 @@ namespace engunits
         typedef engunits::base_unit_tag unit_category;              \
         static constexpr auto symbol()                              \
         {                                                           \
-            return engunits::detail::make_string_literal(#symbol);  \
+            return engunits::detail::make_string_literal(#sym);     \
         }                                                           \
         typedef dimension dimension_tag;                            \
     };                                                              \
@@ -85,14 +85,14 @@ namespace engunits
 
 
 
-#define ENGUNITS_DEFINE_BASE_UNIT(name, symbol, parent, conv_factor) \
+#define ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)    \
     template<std::intmax_t Num, std::intmax_t Den = 1>               \
     struct name##_                                                   \
     {                                                                \
         typedef engunits::base_unit_tag unit_category;               \
         static constexpr auto symbol()                               \
         {                                                            \
-            return engunits::detail::make_string_literal(#symbol);   \
+            return engunits::detail::make_string_literal(#sym);      \
         }                                                            \
         typedef parent parent_unit;                                  \
         typedef parent::dimension_tag dimension_tag;                 \
@@ -100,14 +100,14 @@ namespace engunits
     };                                                               \
     using name = name##_<1>
 
-#define ENGUNITS_DEFINE_DERIVED_UNIT(name, symbol, ...)             \
+#define ENGUNITS_DEFINE_DERIVED_UNIT(name, sym, ...)                \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
     struct name##_                                                  \
     {                                                               \
         typedef engunits::derived_unit_tag unit_category;           \
         static constexpr auto symbol()                              \
         {                                                           \
-            return engunits::detail::make_string_literal(#symbol);  \
+            return engunits::detail::make_string_literal(#sym);     \
         }                                                           \
         static constexpr auto flat()                                \
         {                                                           \
