@@ -40,10 +40,10 @@
 namespace engunits
 {
 
-#define ENGUNITS_DEFINE_UDL(name, symbol)       \
-    auto operator "" _##symbol(long double x)   \
-    {                                           \
-        return quantity<long double, name>(x);  \
+#define ENGUNITS_DEFINE_UDL(name, symbol)                 \
+    constexpr auto operator "" _##symbol(long double x)   \
+    {                                                     \
+        return quantity<long double, name>(x);            \
     }
 
 /**
