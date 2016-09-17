@@ -107,7 +107,8 @@ public:
      */
     constexpr quantity(
         ENGUNITS_ENABLE_IF( std::is_default_constructible<T>::value )
-            ) noexcept( std::is_nothrow_default_constructible<T>::value ) = default;
+            ) noexcept( std::is_nothrow_default_constructible<T>::value )
+    {}
 
     /**
      * @brief Copy construct from equivalent unit, and implicitly convertible @c value_type
