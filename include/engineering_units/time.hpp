@@ -39,7 +39,12 @@ ENGUNITS_DEFINE_BASE_UNIT( millisecond, ms, second, 0.001L );
 ENGUNITS_DEFINE_BASE_UNIT( minute,     min, second, 60.0L );
 ENGUNITS_DEFINE_BASE_UNIT( hour,         h, second, 3600.0L );
 
+namespace literals
+{
+
 ENGUNITS_DEFINE_UDL( second, s )
+
+}
 
 ENGUNITS_IMPORT_OPERATORS
 
