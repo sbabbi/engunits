@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -34,8 +34,36 @@
 
 #include <engineering_units/detail/string_literal.hpp>
 
-#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, tag)                \
-    struct tag{};                                                   \
+/** @file */
+
+namespace engunits
+{
+
+/**
+ * @def ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)
+ * @brief Define a new root unit.
+ * @param name The name of the unit.
+ * @param symbol Symbol used for printing. 
+ *          See @ref engunits::unit_traits::symbol "unit_traits::symbol".
+ * @param dimension Name of the associated dimension.
+ * 
+ * A root unit is a base unit with unit exponent, which is also the
+ * main unit of its own physical quantity, used internally for conversions.
+ * 
+ * This macro will generate:
+ * 
+ *   - An empty @p dimension type, used to tag the newly defined dimension.
+ * 
+ *   - A class template @c name_, with two integral template parameters 
+ *     @c Num and @c Den. All the instances of this class model the @c BaseUnit 
+ *     concept.
+ *     @ref engunits::base_unit_tag "base_unit_tag"
+ * 
+ *   - An alias @p name for @p name_<1> 
+ * 
+ */
+#define ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)          \
+    struct dimension{};                                             \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
     struct name##_                                                  \
     {                                                               \
@@ -44,7 +72,7 @@
         {                                                           \
             return engunits::detail::make_string_literal(#symbol);  \
         }                                                           \
-        typedef tag dimension_tag;                                  \
+        typedef dimension dimension_tag;                            \
     };                                                              \
     using name = name##_<1>
 
@@ -85,5 +113,7 @@
     using engunits::operator==;                         \
     using engunits::operator!=;                         \
     using engunits::operator*;                          \
+    
+}
 
 #endif //ENGINEERING_UNITS_UNIT_HELPER_MACROS_HPP

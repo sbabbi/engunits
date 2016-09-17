@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -54,9 +54,21 @@ constexpr bool is_mixed_unit_v = is_mixed_unit<T>::value;
 }
     
 /**
- * @brief A list of base units.
+ * @brief A type that represents a list of base units.
  * 
- * No duplicates are allowed, i.e. "m^2, m" is ill-formed.
+ * No duplicates are allowed, so `mixed_unit< meter_<2>, meter >` is ill-formed.
+ * 
+ * @pre `is_unit<Ts>` is true for all @c Ts
+ * @pre `sizeof ... (Ts) > 1`
+ * @pre none of the @c Ts is a @c mixed_unit
+ * @pre all the @c Ts have a different base
+ * 
+ * \code{.cpp}
+ *  mixed_unit<>  // ill-formed
+ *  mixed_unit< meter, meter_<2> > // ill-formed
+ *  mixed_unit< meter, feet > // ok, not same base
+ *  mixed_unit< second > // ill formed, simply use 'second'
+ * \endcode
  */
 template<class ... Ts>
 struct mixed_unit
@@ -73,14 +85,14 @@ struct mixed_unit
     
     //TODO: static_assert Ts bases are all different
 
-    static constexpr auto symbol()
-    {
-        return concatenate(' ', Ts::symbol() ... );
-    }
-    
     static constexpr auto flat()
     {
         return detail::multiply( unit_traits<Ts>::flat() ... );
+    }
+    
+    static constexpr auto symbol()
+    {
+        return concatenate(' ', Ts::symbol() ... );
     }
 };
 
@@ -101,6 +113,11 @@ struct unit_traits< mixed_unit<Ts ... > >
     static constexpr auto flat() 
     {
         return unit::flat();
+    }
+    
+    static constexpr auto symbol()
+    {
+        return unit::symbol();
     }
 };
 

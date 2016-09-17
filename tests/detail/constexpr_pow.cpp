@@ -27,8 +27,6 @@
 #include <ratio>
 #include <engineering_units/detail/constexpr_pow.hpp>
 
-#include <iostream>
-
 using engunits::detail::constexpr_pow;
 
 // note: for the integer exponent case, we aim to provide the exact result when casted to double.

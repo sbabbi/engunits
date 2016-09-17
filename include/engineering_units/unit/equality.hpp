@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -31,6 +31,8 @@
 #include <engineering_units/unit/mixed_unit.hpp>
 #include <engineering_units/unit/multiply.hpp>
 #include <engineering_units/unit/pow.hpp>
+
+#include <engineering_units/detail/doxygen.hpp>
 
 
 namespace engunits
@@ -168,10 +170,10 @@ constexpr bool operator!=( const dimensionless & lhs,
  */
 template<class Lhs,
          class Rhs>
-constexpr std::enable_if_t<
-    engunits::is_unit_v<Lhs> && 
-    engunits::is_unit_v<Rhs>,
-    bool> operator==( const Lhs &, const Rhs &)
+constexpr ENGUNITS_ENABLE_IF_T(
+    (engunits::is_unit_v<Lhs> && 
+     engunits::is_unit_v<Rhs>),
+    bool) operator==( const Lhs &, const Rhs &)
 {
     return detail::flat_equal(
         unit_traits<Lhs>::flat(),

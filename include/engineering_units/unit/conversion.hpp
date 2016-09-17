@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -81,22 +81,27 @@ constexpr auto conversion_factor_helper( Lhs const &,
 }
 
 template<class From, class To>
+constexpr bool is_convertible_v = 
+    std::is_same<
+        decltype( 
+            detail::conversion_factor_helper( 
+                inverse( std::declval<To const &>() ),
+                std::declval<From const &>() )
+        ),
+        detail::conversion_factor_with_unit<>
+    >::value;
+
+template<class From, class To>
 constexpr std::enable_if_t<
     is_unit_v<From> && is_unit_v<To>,
     long double
 > conversion_factor( const From & from,
                      const To & to )
 {
-    auto result = detail::conversion_factor_helper( inverse(to), from );
-    
-    static_assert(
-        std::is_same< 
-            decltype(result),
-            detail::conversion_factor_with_unit<>
-        >::value,
-        " Can not convert <from> to <to> ");
+    static_assert( is_convertible_v<From, To>,
+                   " Can not convert <from> to <to> ");
 
-    return result.factor();
+    return detail::conversion_factor_helper( inverse(to), from ).factor();
 }
 
 

@@ -24,8 +24,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP
-#define ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP
+#ifndef ENGINEERING_UNITS_DETAIL_VOID_T_HPP
+#define ENGINEERING_UNITS_DETAIL_VOID_T_HPP
 
 
 namespace engunits
@@ -34,68 +34,15 @@ namespace engunits
 namespace detail
 {
 
-
-/**
- * @internal
- * @brief compute @p base raised to @p num
- */
-constexpr long double constexpr_pow( long double base,
-                                     std::intmax_t num )
+template<class T> struct always_void
 {
-    if ( num < 0 )
-    {
-        return constexpr_pow( 1.0L / base, -num );
-    }
+    typedef void type;
+};
 
-    long double y = 1.0L;
-
-    for ( std::intmax_t i = 0; i < num; ++i )
-    {
-        y = y * base;
-    }
-
-    return y;
-}
-
-/**
- * @internal
- * @brief compute @p base raised to @p num / @p den
- * @note This is moderately sensitive to rounding error, for best results use
- *  co-prime @p num @p den.
- */
-constexpr long double constexpr_pow( long double base,
-                                     std::intmax_t num,
-                                     std::intmax_t den )
-{
-    if ( den < 0 )
-    {
-        return constexpr_pow( 1.0L / base, num, -den );
-    }
-
-    long double y = constexpr_pow( base, num );
-
-    if ( den == 1 )
-    {
-        return y;
-    }
-
-    // Solve x^den == y
-    long double x = 1.0;
-
-    for ( int i = 0; i < 2048; ++i )
-    {
-        const long double delta = ( y / constexpr_pow( x, den-1 ) - x ) / den;
-
-        if ( x + delta == x )
-            break;
-
-        x += delta;
-    }
-
-    return x;
-}
+template<class T> using void_t = typename always_void<T>::type;
 
 }
 }
 
-#endif //ENGINEERING_UNITS_DETAIL_CONSTEXPR_POW_HPP
+#endif //ENGINEERING_UNITS_DETAIL_VOID_T_HPP
+

@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -31,19 +31,15 @@
 #include <type_traits>
 
 #include <engineering_units/unit/traits.hpp>
+
 #include <engineering_units/detail/constexpr_pow.hpp>
+#include <engineering_units/detail/void_t.hpp>
 
 namespace engunits
 {
 
 namespace detail
 {
-
-template<class T> struct always_void
-{
-    typedef void type;
-};
-template<class T> using void_t = typename always_void<T>::type;
 
 template<class T, class U, class = void>
 struct is_ancestor_of : std::false_type {};
