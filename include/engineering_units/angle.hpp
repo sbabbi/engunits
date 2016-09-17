@@ -24,25 +24,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_ANGLE_HPP
+#define ENGINEERING_UNITS_ANGLE_HPP
 
-#include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
 
 namespace engunits
 {
-namespace si
-{
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_ROOT_UNIT( radian, rad, angle );
+ENGUNITS_DEFINE_BASE_UNIT( degree, deg, radian, 0.017453292519943295088125L);
+ENGUNITS_DEFINE_BASE_UNIT( gradian, gon, radian, 0.015707963267948965580329L);
+ENGUNITS_DEFINE_BASE_UNIT( turn, tr, degree, 360.0L );
+
 ENGUNITS_IMPORT_OPERATORS
 
 }
-}
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
-
+#endif //ENGINEERING_UNITS_ANGLE_HPP

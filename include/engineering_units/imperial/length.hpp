@@ -38,6 +38,8 @@ namespace imperial
 
 ENGUNITS_DEFINE_BASE_UNIT( feet, ft, si::meter, 0.3048L );
 ENGUNITS_DEFINE_BASE_UNIT( inch, in, feet, ( 1.0L / 12.0L ) );
+
+ENGUNITS_DEFINE_BASE_UNIT( nautical_mile, NM, si::meter, 1852.0L );
 ENGUNITS_IMPORT_OPERATORS
 
 }

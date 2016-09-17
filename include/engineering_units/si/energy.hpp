@@ -24,25 +24,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_SI_ENERGY_HPP
+#define ENGINEERING_UNITS_SI_ENERGY_HPP
 
 #include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
 #include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
+#include <engineering_units/si/force.hpp>
 
 namespace engunits
 {
 namespace si
 {
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, newton, meter  );
+ENGUNITS_DEFINE_DERIVED_UNIT( decijoule,  dJ, newton, decimeter );
+ENGUNITS_DEFINE_DERIVED_UNIT( centijoule, cJ, newton, centimeter );
+ENGUNITS_DEFINE_DERIVED_UNIT( millijoule, mJ, newton, millimeter );
+ENGUNITS_DEFINE_DERIVED_UNIT( decajoule, daJ, newton, decameter );
+ENGUNITS_DEFINE_DERIVED_UNIT( hectojoule, hJ, newton, hectometer );
+ENGUNITS_DEFINE_DERIVED_UNIT( kilojoule,  kJ, newton, kilometer );
+
+ENGUNITS_DEFINE_DERIVED_UNIT( erg, erg, dyne, centimeter  );
+ENGUNITS_DEFINE_DERIVED_UNIT( kilowatt_hour, kWh, newton, kilometer, hour, second_<-1> );
 ENGUNITS_IMPORT_OPERATORS
 
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
-
+#endif //ENGINEERING_UNITS_SI_ENERGY_HPP

@@ -24,25 +24,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_IMPERIAL_VELOCITY_HPP
+#define ENGINEERING_UNITS_IMPERIAL_VELOCITY_HPP
 
 #include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
+#include <engineering_units/imperial/length.hpp>
+
 
 namespace engunits
 {
-namespace si
+namespace imperial
 {
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( knot, knot, nautical_mile, hour_<-1> );
 ENGUNITS_IMPORT_OPERATORS
 
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
+#endif //ENGINEERING_UNITS_IMPERIAL_VELOCITY_HPP
 

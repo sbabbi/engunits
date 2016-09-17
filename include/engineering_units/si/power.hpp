@@ -24,25 +24,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_SI_POWER_HPP
+#define ENGINEERING_UNITS_SI_POWER_HPP
 
 #include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
+#include <engineering_units/si/energy.hpp>
 
 namespace engunits
 {
 namespace si
 {
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( watt, W, joule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( deciwatt,  dW, decijoule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( centiwatt, cW, centijoule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( milliwatt, mW, millijoule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( decawatt, daW, decajoule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( hectowatt, hW, hectojoule, second_<-1> );
+ENGUNITS_DEFINE_DERIVED_UNIT( kilowatt,  kW, kilojoule, second_<-1> );
+
 ENGUNITS_IMPORT_OPERATORS
 
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
+#endif //ENGINEERING_UNITS_SI_POWER_HPP
 

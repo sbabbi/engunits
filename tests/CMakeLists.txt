@@ -1,6 +1,12 @@
 
 enable_testing()
 
+## allunits
+add_executable( allunits_test allunits.cpp )
+target_link_libraries( allunits_test engineering_units )
+
+add_test( NAME allunits_test COMMAND quantity_test )
+
 ## quantity
 add_executable( quantity_test quantity.cpp )
 target_link_libraries( quantity_test engineering_units )
