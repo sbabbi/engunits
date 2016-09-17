@@ -108,31 +108,43 @@ constexpr bool operator!=( const mixed_unit<Lhs...> & lhs,
 }
 
 template<class ... Lhs, class Rhs>
-constexpr bool operator==( const mixed_unit<Lhs...> & lhs, 
-                           const Rhs &)
+constexpr ENGUNITS_ENABLE_IF_T( 
+    is_unit_v<Rhs>, 
+    bool
+    ) operator==( const mixed_unit<Lhs...> & lhs, 
+                  const Rhs & )
 {
     return detail::flat_equal(lhs.flat(), 
                               unit_traits<Rhs>::flat() );
 }
 
 template<class ... Lhs, class Rhs>
-constexpr bool operator!=( const mixed_unit<Lhs...> & lhs, 
-                           const Rhs & rhs )
+constexpr ENGUNITS_ENABLE_IF_T( 
+    is_unit_v<Rhs>, 
+    bool
+    ) operator!=( const mixed_unit<Lhs...> & lhs, 
+                  const Rhs & rhs )
 {
     return !(lhs == rhs);
 }
 
 template<class Lhs, class ... Rhs>
-constexpr bool operator==( const Lhs &,
-                           const mixed_unit<Rhs...> & rhs )
+constexpr ENGUNITS_ENABLE_IF_T( 
+    is_unit_v<Lhs>, 
+    bool
+    ) operator==( const Lhs &,
+                  const mixed_unit<Rhs...> & rhs )
 {
     return detail::flat_equal( rhs.flat(),
                                unit_traits<Lhs>::flat() );
 }
 
 template<class Lhs, class ... Rhs>
-constexpr bool operator!=( const Lhs & lhs,
-                           const mixed_unit<Rhs...> & rhs )
+constexpr ENGUNITS_ENABLE_IF_T( 
+    is_unit_v<Lhs>, 
+    bool
+    ) operator!=( const Lhs & lhs,
+                  const mixed_unit<Rhs...> & rhs )
 {
     return !(lhs == rhs);
 }
