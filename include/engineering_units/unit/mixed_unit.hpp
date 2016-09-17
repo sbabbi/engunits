@@ -30,6 +30,7 @@
 #include <type_traits>
 
 #include <engineering_units/unit/traits.hpp>
+#include <engineering_units/unit/predicates.hpp>
 
 #include <engineering_units/detail/fold_expressions.hpp>
 
@@ -96,7 +97,11 @@ struct mixed_unit
     }
 };
 
-// Specialization for base units and derived units.
+/**
+ * @brief Specialize @c unit_traits for @c mixed_unit.
+ * 
+ * Every @c mixed_unit is interpreted as a unit with exponent equal to one.
+ */
 template< class ... Ts >
 struct unit_traits< mixed_unit<Ts ... > >
 {

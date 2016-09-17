@@ -38,39 +38,19 @@ namespace engunits
 
 /**
  * @brief Tag type for base units.
- *
- * The definition of @c BaseUnit in this library is a bit different from the
- * usual one used in physics.
- * We consider a base unit any unit whose physical quantity is not derived.
- * For instance meters, millimeters and feet are all @c BaseUnit in this context,
- * while newtons, joule etc are not base units because they are equivalent
- * to a combination of base units.
- * 
- * Notice that in general a @c BaseUnit has an associated exponent - 
- * `meter_<2>` is a @c BaseUnit -.
- * 
- * Custom base units can be defined with the @ref ENGUNITS_DEFINE_BASE_UNIT macro.
- * Custom physical quantities can be defined with the @ref ENGUNITS_DEFINE_ROOT_UNIT,
- * which also defines a 'root' base unit for the newly created physical quantity.
- * 
- * @sa derived_unit_tag
+ * @sa BaseUnit
  */
 struct base_unit_tag {};
 
 /**
  * @brief Tag type for derived units.
- * 
- * Derived units are made of a combination of @c BaseUnit.
- * The generic model for 'anonymous' derived units is the @ref mixed_unit class
- * template. New derived units can be defined with the @ref ENGUNITS_DEFINE_DERIVED_UNIT
- * macro.
- * 
- * @sa base_unit_tag
+ * @sa DerivedUnit
  */
 struct derived_unit_tag {};
 
 /**
- * @brief Query information about a unit
+ * @brief Traits to obtain information about a unit
+ * @sa BaseUnit, DerivedUnit, base_unit_tag, derived_unit_tag
  */
 template<class T>
 struct unit_traits
@@ -144,29 +124,29 @@ struct unit_traits
 #endif //ENGUNITS_DOXYGEN
 };
 
-// Specialization for base units and derived units.
+/**
+ * @brief Convenience specialization for base and derived units.
+ *
+ * This specialization applies to all the unit shipped with this library.
+ * It looks for class templates in the form `Unit<Num, Den>`.
+ * 
+ */
 template< std::intmax_t Num,
           std::intmax_t Den,
           template< std::intmax_t, std::intmax_t > class U >
 struct unit_traits< U< Num, Den> >
 {
     typedef U<Num, Den> unit;
-    typedef typename unit::unit_category unit_category;
     
     typedef U<1,1> base;
+
     typedef std::ratio<Num, Den> exponent;
+
+    typedef typename unit::unit_category unit_category;
 
     template< std::intmax_t N, std::intmax_t D = 1 >
     using base_ = U<N, D>;
 
-    // Convert derived units into mixed units.
-    static constexpr unit flat( base_unit_tag ) { return unit{}; }
-    
-    static constexpr auto flat( derived_unit_tag ) 
-    { 
-        return unit::flat();
-    }
-    
     static constexpr auto flat() 
     {
         return flat( unit_category{} );
@@ -176,135 +156,17 @@ struct unit_traits< U< Num, Den> >
     {
         return unit::symbol();
     }
+    
+private:
+    // Convert derived units into mixed units.
+    static constexpr unit flat( base_unit_tag ) { return unit{}; }
+    
+    static constexpr auto flat( derived_unit_tag ) 
+    { 
+        return unit::flat();
+    }
 };
 
-#ifdef ENGUNITS_DOXYGEN
-
-/**
- * @brief Check if @p T is a unit
- * @note A @c unit is simply a class type with a member typedef @c unit_tag
- */    
-template<class T>
-struct is_unit;
-
-#endif // ENGUNITS_DOXYGEN
-
-template<class T, class = void>
-struct is_unit : std::false_type {};
-
-template<class T>
-struct is_unit<T, detail::void_t< typename unit_traits<T>::unit_category > > :
-    std::true_type
-{};
-    
-template<class T>
-constexpr bool is_unit_v = is_unit<T>::value;
-
-/**
- * @brief Check if two units have the same base
- * 
- * Metafunction that returns true if @p Lhs and @p Rhs have the same base.
- * 
- * For instance meter and meter squared have the same base (meter), while
- * seconds and kilograms do not.
- * 
- * @pre @c is_unit< @p Lhs > and @c is_unit <@p Rhs > 
- */
-template<class Lhs, class Rhs>
-using is_same_base = 
-    ENGUNITS_UNSPECIFIED(
-        typename std::is_same<
-            typename unit_traits<Lhs>::base,
-            typename unit_traits<Rhs>::base
-        >
-    );
-
-template<class Lhs, class Rhs>
-constexpr bool is_same_base_v = is_same_base<Lhs, Rhs>::value;
-
-/**
- * @brief Special empty type to represent dimensionless results
- */
-struct dimensionless {};
-
-/**
- * @brief Compare any unit to @c dimensionless, always false.
- * @relates dimensionless
- */
-template<class Unit>
-constexpr bool operator==(const Unit &, const dimensionless & )
-{
-    return false;
 }
-
-template<class Unit>
-constexpr bool operator!=(const Unit &, const dimensionless & )
-{
-    return true;
-}
-
-/**
- * @brief @c dimensionless vs Unit comparison
- * @relates dimensionless
- */
-template<class Unit>
-constexpr bool operator==(const dimensionless &, const Unit & )
-{
-    return false;
-}
-
-template<class Rhs>
-constexpr bool operator!=(const dimensionless &, const Rhs & )
-{
-    return true;
-}
-
-/**
- * @brief @c dimensionless vs @c dimensionless comparison, always true.
- * @relates dimensionless
- */
-constexpr bool operator==(const dimensionless &, const dimensionless & )
-{
-    return true;
-}
-
-constexpr bool operator!=(const dimensionless &, const dimensionless & )
-{
-    return false;
-}
-
-/**
- * @brief Multiply @p lhs by @c dimensionless, always return the @p lhs
- * @relates dimensionless
- */
-template<class Unit>
-constexpr ENGUNITS_ENABLE_IF_T(is_unit_v<Unit>, Unit)
-    operator*( const Unit & lhs, const dimensionless &)
-{
-    return lhs;
-}
-
-/**
- * @brief Right multiply @p rhs by @c dimensionless, always return the @p rhs
- * @relates dimensionless
- */
-template<class Unit>
-constexpr ENGUNITS_ENABLE_IF_T(is_unit_v<Unit>, Unit)
-    operator*( const dimensionless &, const Unit & rhs)
-{
-    return rhs;
-}
-
-/**
- * @brief @c dimensionless internal multiplication, return @c dimensionless
- * @relates dimensionless
- */
-constexpr dimensionless operator*( const dimensionless &, const dimensionless &)
-{
-    return dimensionless{};
-}
-
-}
-
 
 #endif //ENGINEERING_UNITS_UNIT_TRAITS_HPP

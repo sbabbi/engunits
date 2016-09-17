@@ -27,8 +27,9 @@
 #ifndef ENGINEERING_UNITS_UNIT_MULTIPLY_HPP
 #define ENGINEERING_UNITS_UNIT_MULTIPLY_HPP
 
-#include <engineering_units/unit/mixed_unit.hpp>
 #include <engineering_units/unit/traits.hpp>
+#include <engineering_units/unit/mixed_unit.hpp>
+#include <engineering_units/unit/dimensionless.hpp>
 
 #include <engineering_units/detail/merge.hpp>
 
