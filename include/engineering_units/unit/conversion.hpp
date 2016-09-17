@@ -71,6 +71,13 @@ constexpr auto do_simplify( Lhs const & lhs,
 }
 
 template<class Lhs, class Rhs>
+constexpr auto do_simplify( Lhs const & lhs,
+                            Rhs const & rhs )
+{
+    return simplifies( lhs, rhs );
+}
+
+template<class Lhs, class Rhs>
 constexpr auto conversion_factor_helper( Lhs const &,
                                          Rhs const & )
 {
