@@ -33,6 +33,8 @@
 #include <engineering_units/unit/traits.hpp>
 #include <engineering_units/unit/mixed_unit.hpp>
 
+#include <engineering_units/detail/doxygen.hpp>
+
 namespace engunits
 {
     
@@ -55,21 +57,36 @@ template<class Base, class Exponent>
 using pow_t = typename pow<Base, Exponent>::type;
 
 }
-    
+
+/**
+ * @ingroup operators
+ * @{
+ * 
+ * @brief Raise a unit @p Base to a power @p Exponent
+ * @tparam Base a model of @ref Unit
+ * @tparam Exponent a specialization of `std::ratio`
+ * 
+ * This function participates in overload resolution only if 
+ * @p Base models @ref Unit.
+ */
 template<class Base, class Exponent>
 constexpr auto pow( const Base &,
                     Exponent,
-                    std::enable_if_t<
-                        is_unit_v<Base>,
-                        int
-                    > = 0 )
+                    ENGUNITS_ENABLE_IF( is_unit_v<Base> ) )
 {
     return detail::pow_t<Base, Exponent>{};
 }
 
-template<class T>
-constexpr auto inverse( const T & x,
-                        std::enable_if_t< is_unit_v<T>, int> = 0 )
+/**
+ * @brief Compute the inverse of a unit.
+ * @tparam Unit a model of @ref Unit
+ * @note Equivalent to `pow(x, std::ratio<-1>{})`.
+ *
+ * @sa pow
+ */
+template<class Unit>
+constexpr auto inverse( const Unit & x,
+                        ENGUNITS_ENABLE_IF( is_unit_v<Unit> ) )
 {
     return pow( x, std::ratio<-1> {} );
 }

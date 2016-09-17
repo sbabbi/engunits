@@ -36,6 +36,10 @@
 namespace engunits
 {
 
+/**
+ * @ingroup operators
+ * @{
+ */
 template<class U>
 ENGUNITS_ENABLE_IF_T(
     is_unit_v<U>,
@@ -49,6 +53,8 @@ std::ostream& operator<<(std::ostream & os, quantity<T, Units...> const & x)
 {
     return os << x.value() << x.unit();
 }
+
+/** @} */
 
 }
 

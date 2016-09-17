@@ -32,6 +32,11 @@
 
 namespace engunits
 {
+    
+/**
+ * @ingroup metafunctions
+ * @{
+ */
 
 /**
  * @brief Check if two units have the same base
@@ -41,7 +46,7 @@ namespace engunits
  * For instance meter and meter squared have the same base (meter), while
  * seconds and kilograms do not.
  * 
- * @pre @c is_unit< @p Lhs > and @c is_unit <@p Rhs > 
+ * @note @p Lhs and @p Rhs must model the @ref Unit concept.
  */
 template<class Lhs, class Rhs>
 using is_same_base = 
@@ -55,9 +60,13 @@ using is_same_base =
 template<class Lhs, class Rhs>
 constexpr bool is_same_base_v = is_same_base<Lhs, Rhs>::value;
 
+/** @} */
+
+
 #ifdef ENGUNITS_DOXYGEN
 
 /**
+ * @ingroup metafunctions
  * @brief Check if @p T is a unit
  * @note This simply inspects @p T for a member typedef @c unit_tag
  */    
@@ -78,7 +87,6 @@ template<class T>
 constexpr bool is_unit_v = is_unit<T>::value;
 
 #endif // ENGUNITS_DOXYGEN
-
 
 }
 

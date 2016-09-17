@@ -38,8 +38,7 @@
 #include <engineering_units/unit/pow.hpp>
 #include <engineering_units/unit/simplify.hpp>
 
-#include <engineering_units/detail/fold_expressions.hpp>
-
+#include <engineering_units/detail/doxygen.hpp>
 
 namespace engunits
 {
@@ -101,8 +100,26 @@ constexpr bool is_unit_or_dimensionless_v =
 
 }
 
+/**
+ * @ingroup metafunctions
+ * @{
+ */
+
+/**
+ * @brief Checks if there is a conversion from the unit @p From to the unit @p To
+ * 
+ * @pre @p From and @p To must be either units or @c dimensionless.
+ * 
+ * Expands to `std::true_type` if the units are convertible, `std::false_type` otherwise.
+ * 
+ * @note `is_convertible_t<U,U>` is always true.
+ * @note `is_convertible_t<U,T> = is_convertible_t<U,T>`
+ * 
+ * @sa is_convertible_t
+ * @sa is_convertible
+ */
 template<class From, class To>
-using is_convertible_t = typename
+using is_convertible_t = ENGUNITS_UNSPECIFIED( typename
     std::is_same<
         decltype( 
             detail::conversion_factor_helper( 
@@ -110,24 +127,51 @@ using is_convertible_t = typename
                 std::declval<From const &>() )
         ),
         detail::conversion_factor_with_unit<>
-    >::type;
+    >::type );
 
+/**
+ * @brief Variable helper for @c is_convertible_t
+ * 
+ * Like @c is_convertible_t, but as a boolean instead of `std::integral_constant`.
+ * 
+ * @sa is_convertible_t
+ * @sa is_convertible
+ */
 template<class From, class To>
 constexpr bool is_convertible_v = is_convertible_t<From, To>::value;
-    
+
+/**
+ * @brief Function helper for @c is_convertible_t
+ * @return `std::true_type` if @p From is convertible to @p To, `std::false_type` otherwise.
+ * 
+ * @sa is_convertible_t
+ * @sa is_convertible_v
+ */
 template<class From, class To>
 constexpr auto is_convertible(From const &, To const &)
 {
     return is_convertible_t<From, To>{};
 }
 
+/**
+ * @brief Returns the conversion factor between two units.
+ * @pre To use this function, `is_convertible_v<From, To>` must be true.
+ * 
+ * @return The conversion factor as a `long double`.
+ * @warning If the two units are not convertible this will fail with a `static_assert` 
+ *   Use `is_convertible` to check the precondition.
+ * 
+ * Computes a conversion factor between to units, that is the ratio between
+ * @p To and @p From. 
+ * 
+ * 
+ */
 template<class From, class To>
-constexpr std::enable_if_t<
+constexpr ENGUNITS_ENABLE_IF_T(
     detail::is_unit_or_dimensionless_v<From> && 
     detail::is_unit_or_dimensionless_v<To>,
-    long double
-> conversion_factor( const From & from,
-                     const To & to )
+    long double ) conversion_factor( const From & from,
+                                      const To & to )
 {
     static_assert( is_convertible_v<From, To>,
                    " Can not convert <from> to <to> ");
@@ -135,6 +179,7 @@ constexpr std::enable_if_t<
     return detail::conversion_factor_helper( to, from ).factor();
 }
 
+/** @} */
 
 }
 

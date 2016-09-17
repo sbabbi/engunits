@@ -91,6 +91,11 @@ constexpr bool flat_equal( const mixed_unit<Lhs...> & lhs,
 }
 
 /**
+ * @ingroup operators
+ * @{
+ */
+
+/**
  * @brief Compare two @c mixed_unit for equality
  */
 template<class ... Lhs, class ... Rhs>
@@ -107,6 +112,12 @@ constexpr bool operator!=( const mixed_unit<Lhs...> & lhs,
     return !(lhs == rhs);
 }
 
+/**
+ * @brief Compare a @c mixed_unit with a @ref Unit
+ * 
+ * This function participates in the overload resolution only if
+ * @p Rhs models @ref Unit.
+ */
 template<class ... Lhs, class Rhs>
 constexpr ENGUNITS_ENABLE_IF_T( 
     is_unit_v<Rhs>, 
@@ -118,6 +129,12 @@ constexpr ENGUNITS_ENABLE_IF_T(
                               unit_traits<Rhs>::flat() );
 }
 
+/**
+ * @brief Compare a @c mixed_unit with a @ref Unit
+ * 
+ * This function participates in the overload resolution only if
+ * @p Rhs models @ref Unit.
+ */
 template<class ... Lhs, class Rhs>
 constexpr ENGUNITS_ENABLE_IF_T( 
     is_unit_v<Rhs>, 
@@ -128,6 +145,12 @@ constexpr ENGUNITS_ENABLE_IF_T(
     return !(lhs == rhs);
 }
 
+/**
+ * @brief Compare a @ref Unit with a @c mixed_unit
+ * 
+ * This function participates in the overload resolution only if
+ * @p Lhs models @ref Unit.
+ */
 template<class Lhs, class ... Rhs>
 constexpr ENGUNITS_ENABLE_IF_T( 
     is_unit_v<Lhs>, 
@@ -139,6 +162,12 @@ constexpr ENGUNITS_ENABLE_IF_T(
                                unit_traits<Lhs>::flat() );
 }
 
+/**
+ * @brief Compare a @ref Unit with a @c mixed_unit
+ * 
+ * This function participates in the overload resolution only if
+ * @p Lhs models @ref Unit.
+ */
 template<class Lhs, class ... Rhs>
 constexpr ENGUNITS_ENABLE_IF_T( 
     is_unit_v<Lhs>, 
@@ -194,13 +223,16 @@ constexpr ENGUNITS_ENABLE_IF_T(
 
 template<class Lhs,
          class Rhs>
-constexpr std::enable_if_t<
+constexpr ENGUNITS_ENABLE_IF_T(
     engunits::is_unit_v<Lhs> && 
     engunits::is_unit_v<Rhs>,
-    bool> operator!=( const Lhs & lhs, const Rhs & rhs)
+    bool) operator!=( const Lhs & lhs, const Rhs & rhs)
 {
     return !(lhs == rhs);
 }
+
+/** @} */
+
 }
 
 #endif //ENGINEERING_UNITS_UNIT_EQUALITY_HPP

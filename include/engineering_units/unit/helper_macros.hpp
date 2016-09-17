@@ -40,35 +40,30 @@
 namespace engunits
 {
 
+/**
+ * @def ENGUNITS_DEFINE_UDL(name, symbol)
+ * @brief Define a user-defined-literal for a unit.
+ * @param name The name of the unit to define the literal for.
+ * @param symbol The literal symbol.
+ * 
+ * Introduce a UDL that can be used to easily create a quantity of doubles.
+ * 
+ * @code{.cpp}
+ *   ENGUNITS_DEFINE_UDL(meter, m) 
+ * 
+ *   // ...
+ *  
+ *   auto q = 3.0_m; // decltype(q) is quantity<double, meter>.
+ * @endcode
+ */
 #define ENGUNITS_DEFINE_UDL(name, symbol)                 \
     constexpr auto operator "" _##symbol(long double x)   \
     {                                                     \
-        return quantity<long double, name>(x);            \
+        return quantity<double, name>(x);                 \
     }
 
-/**
- * @def ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)
- * @brief Define a new root unit.
- * @param name The name of the unit.
- * @param sym Symbol used for printing. 
- *          See @ref engunits::unit_traits::symbol "unit_traits::symbol".
- * @param dimension Name of the associated dimension.
- * 
- * A root unit is a base unit with unit exponent, which is also the
- * main unit of its own physical quantity, used internally for conversions.
- * 
- * This macro will generate:
- * 
- *   - An empty @p dimension type, used to tag the newly defined dimension.
- * 
- *   - A class template @c name_, with two integral template parameters 
- *     @c Num and @c Den. All the instances of this class model the @c BaseUnit 
- *     concept.
- *     @ref engunits::base_unit_tag "base_unit_tag"
- * 
- *   - An alias @p name for @p name_<1> 
- * 
- */
+#ifndef ENGUNITS_DOXYGEN
+
 #define ENGUNITS_DEFINE_ROOT_UNIT(name, sym, dimension)             \
     struct dimension{};                                             \
     template<std::intmax_t Num, std::intmax_t Den = 1>              \
@@ -82,8 +77,6 @@ namespace engunits
         typedef dimension dimension_tag;                            \
     };                                                              \
     using name = name##_<1>;                                        \
-
-
 
 #define ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)    \
     template<std::intmax_t Num, std::intmax_t Den = 1>               \
@@ -119,11 +112,116 @@ namespace engunits
     };                                                              \
     using name = name##_<1> 
 
-    
+/**
+ * @def ENGUNITS_IMPORT_OPERATORS
+ * @brief Import the generic unit operators in the current namespace
+ *
+ * Import the equality, inequality and multiplication operator for 
+ * units into the current namespace. This is required if you define
+ * a new unit in a non-standard namespace
+ */
 #define ENGUNITS_IMPORT_OPERATORS                       \
     using engunits::operator==;                         \
     using engunits::operator!=;                         \
     using engunits::operator*;                          \
+
+#else
+
+/**
+ * @def ENGUNITS_DEFINE_ROOT_UNIT(name, symbol, dimension)
+ * @brief Define a new root unit.
+ * @param name The name of the unit.
+ * @param sym Symbol used for printing. 
+ *          See @ref engunits::unit_traits::symbol "unit_traits::symbol".
+ * @param dimension Name of the associated dimension.
+ * 
+ * A root unit is a base unit with unit exponent, which is also the
+ * main unit of its own physical quantity, used internally for conversions.
+ * 
+ * This macro will generate:
+ * 
+ *   - An empty @p dimension type, used to tag the newly defined dimension.
+ * 
+ *   - A class template @c name_, with two integral template parameters 
+ *     @c Num and @c Den. All the instances of this class model the @c BaseUnit 
+ *     concept.
+ *     @ref engunits::base_unit_tag "base_unit_tag"
+ * 
+ *   - An alias @p name for @p name_<1> 
+ * 
+ */
+#define ENGUNITS_DEFINE_ROOT_UNIT(name, sym, dimension)             \
+    template<std::intmax_t Num, std::intmax_t Den> class name##_;   \
+    using name = name##_<1>
+
+/**
+ * @def ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)
+ * @brief Define a base unit that is derived from @p parent.
+ * @param name The name of the new base unit.
+ * @param sym The associated symbol
+ * @param parent The parent unit
+ * @param conv_factor ratio between @c parent and @c name
+ * 
+ * Defines a new non-root unit, which can be converted to 
+ * another unit @p parent by applying the conversion factor @p conv_factor.
+ * 
+ * @code{.cpp}
+ *   // millimeter is defined in terms of meter.
+ *   ENGUNITS_DEFINE_BASE_UNIT(millimeter, mm, meter, 0.001L );
+ * @endcode{.cpp}
+ * 
+ * Notice that @ref DerivedUnit "DerivedUnits" can not be defined with
+ * this macro, one must use @c ENGUNITS_DEFINE_DERIVED_UNIT.
+ * 
+ */
+#define ENGUNITS_DEFINE_BASE_UNIT(name, sym, parent, conv_factor)    \
+    template<std::intmax_t Num, std::intmax_t Den> class name##_;   \
+    using name = name##_<1>
+
+/**
+ * @def ENGUNITS_DEFINE_DERIVED_UNIT(name, sym, ...)
+ * @brief Define a derived unit.
+ * @param name Name of the new unit
+ * @param sym Symbol of the new unit
+ * 
+ * Define a derived unit using a combination of @ref BaseUnit "BaseUnits"
+ * or @ref DerivedUnit "DerivedUnits." These units are to be listed 
+ * after @p sym.
+ * 
+ * The list of units must contain at least two elements, and all the 
+ * elements in the list shall have a different base (see `unit_traits::base`).
+ * 
+ * @code{.cpp}
+ *    ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, newton, meter ); // ok
+ *    ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, kilogram, meter_<2>, second_<-2> ); // ok
+ * 
+ *    // bad: 'meter' is duplicated
+ *    ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, kilogram, meter, meter, second_<-2> );
+ * 
+ *    // bad: 'meter' is present multiple times
+ *    ENGUNITS_DEFINE_DERIVED_UNIT( joule, J, kilogram, meter, meter_<2>, second_<-2> );
+ * @endcode
+ * 
+ * It is not possible to define a derived unit using a conversion factor
+ * from another derived unit.
+ *
+ * @code{.cpp}
+ *    
+ *    //bad: can not define the correct conversion factor!
+ *    ENGUNITS_DEFINE_DERIVED_UNIT(pound_force, lbf, newton );
+ * 
+ *    //instead:
+ *    ENGUNITS_DEFINE_BASE_UNIT( slug, slug, kilogram ,  14.5939);
+ *    ENGUNITS_DEFINE_DERIVED_UNIT( pound_force, lbf, slug, foot, seconds<-2>);
+ * 
+ * @endcode
+ */
+#define ENGUNITS_DEFINE_DERIVED_UNIT(name, sym, ...)                \
+    template<std::intmax_t Num, std::intmax_t Den>                  \
+    using name##__ =  __VA_ARGS__;                                  \
+    using name = name##_<1>
+
+#endif //ENGUNITS_DOXYGEN
     
 }
 

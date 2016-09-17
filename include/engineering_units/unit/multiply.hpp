@@ -228,12 +228,23 @@ using multiply_result_t = typename multiply_result<Lhs, Rhs>::type;
 
 }
 
+/**
+ * @ingroup operators
+ * @{
+ * 
+ * @brief Multiplies two units
+ * 
+ * This function participates in the overload resolution only if
+ * @p Lhs and @p Rhs model the @ref Unit concept.
+ */
 template<class Lhs, class Rhs>
 constexpr ENGUNITS_UNSPECIFIED( detail::multiply_result_t<Lhs, Rhs> ) 
     operator* (const Lhs & lhs, const Rhs & rhs)
 {
     return detail::multiplies(lhs, rhs);
 }
+
+/** @} */
 
 }
 

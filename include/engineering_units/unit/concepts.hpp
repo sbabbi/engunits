@@ -37,8 +37,7 @@
  */
 
 /**
- * @defgroup Concepts
- * @brief Concepts used by this library
+ * @defgroup Concepts Concepts
  */
 
 namespace engunits
@@ -73,21 +72,21 @@ namespace engunits
  * 
  *  - @c Destructible
  * 
- *  - `unit_traits<U>::base` 
+ *  - `unit_traits::base` 
  *          
  *     Models @ref Unit
  * 
- *  - `unit_traits<U>::exponent -> std::ratio<Num, Den> `
+ *  - `unit_traits::exponent -> std::ratio<Num, Den> `
  *
- *  - `unit_traits<U>:: template base_<Num, Den>`
+ *  - `unit_traits::base_<Num, Den>`
  * 
  *     Obtains a new unit with same base and different exponent
  * 
- *  - `unit_traits<U>::symbol().c_str() -> const char * `
+ *  - `unit_traits::symbol().c_str() -> const char * `
  * 
  *     Descriptive symbol
  * 
- *  - `unit_traits<U>::flat()`
+ *  - `unit_traits::flat()`
  * 
  *     Models @ref Unit
  * 
@@ -123,9 +122,9 @@ namespace engunits
  * 
  *   - @ref Unit
  * 
- *   - `unit_traits<U>::unit_category == base_unit_tag`
+ *   - `unit_traits::unit_category == base_unit_tag`
  * 
- *   - `unit_traits<U>::flat() == U()`
+ *   - `unit_traits::flat() == U()`
  * 
  * @sa Unit
  * @sa is_unit 
@@ -148,7 +147,7 @@ namespace engunits
  *   quantities are derived.
  * 
  *   The list of @c BaseUnit that forms a derived unit can be accessed with 
- *   `unit_traits<U>::flat` (see below).
+ *   `unit_traits::flat` (see below).
  * 
  *   The class template @c mixed_unit is the generic model for *unnamed* @c DerivedUnits.
  * 
@@ -156,9 +155,9 @@ namespace engunits
  * 
  *   - @ref Unit
  * 
- *   - `unit_traits<U>::unit_category == derived_unit_tag`
+ *   - `unit_traits::unit_category == derived_unit_tag`
  *      
- *   - `unit_traits<U>::flat == mixed_unit<BaseUnits ...>`
+ *   - `unit_traits::flat == mixed_unit<BaseUnits ...>`
  *          
  *      Notice that the @c mixed_unit returned by @c flat shall only contain
  *      @ref BaseUnit "BaseUnits".

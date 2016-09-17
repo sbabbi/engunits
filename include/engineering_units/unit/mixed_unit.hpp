@@ -70,6 +70,8 @@ constexpr bool is_mixed_unit_v = is_mixed_unit<T>::value;
  *  mixed_unit< meter, feet > // ok, not same base
  *  mixed_unit< second > // ill formed, simply use 'second'
  * \endcode
+ * 
+ * @sa Unit
  */
 template<class ... Ts>
 struct mixed_unit
@@ -86,14 +88,28 @@ struct mixed_unit
     
     //TODO: static_assert Ts bases are all different
 
+    /**
+     * @brief Return a flat version of this @c mixed_unit
+     * @note This might be the current unit itself.
+     * 
+     * @sa unit_traits::flat
+     */
     static constexpr auto flat() 
     {
         return detail::multiply( unit_traits<Ts>::flat() ... );
     }
     
+    /**
+     * @brief Return the symbol used to represent this unit.
+     * 
+     * This is simply the concatenation of all the contained unit's symbols,
+     * with a space in between.
+     * 
+     * @sa unit_traits::symbol
+     */
     static constexpr auto symbol()
     {
-        return concatenate(' ', Ts::symbol() ... );
+        return detail::concatenate(' ', Ts::symbol() ... );
     }
 };
 
@@ -121,11 +137,8 @@ struct pow_helper
 
 }
 
-/**
- * @brief Specialize @c unit_traits for @c mixed_unit.
- * 
- * Every @c mixed_unit is interpreted as a unit with exponent equal to one.
- */
+/** @cond */
+
 template< class ... Ts >
 struct unit_traits< mixed_unit<Ts ... > >
 {
@@ -152,6 +165,8 @@ struct unit_traits< mixed_unit<Ts ... > >
         return unit::symbol();
     }
 };
+
+/** @endcond */
 
 }
 

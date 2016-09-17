@@ -27,7 +27,10 @@
 #ifndef ENGINEERING_UNITS_DETAIL_DOXYGEN_HPP
 #define ENGINEERING_UNITS_DETAIL_DOXYGEN_HPP
 
-// Macros to stop doxygen from parsing implementation details
+/**
+ * @defgroup metafunctions Metafunctions
+ * @defgroup operators Operators and functions
+ */
 
 // Hide all the sfinae magic from doxygen.
 #ifdef ENGUNITS_DOXYGEN
