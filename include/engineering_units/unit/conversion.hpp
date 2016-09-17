@@ -34,6 +34,7 @@
 
 #include <engineering_units/unit/traits.hpp>
 #include <engineering_units/unit/mixed_unit.hpp>
+#include <engineering_units/unit/multiply.hpp>
 #include <engineering_units/unit/pow.hpp>
 #include <engineering_units/unit/simplify.hpp>
 
@@ -46,43 +47,29 @@ namespace engunits
 namespace detail
 {
 
-template<class ... Lhs, class ... Rhs>
-constexpr auto do_simplify( mixed_unit<Lhs...> const &,
-                            mixed_unit<Rhs...> const & )
+template<class ... Ts>
+constexpr auto do_simplify( mixed_unit<Ts...> const & )
 {
-    return simplifies( conversion_factor_with_unit<Lhs...>(),
-                       conversion_factor_with_unit<Rhs...>() );
+    return simplifies( conversion_factor_with_unit<>(),
+                       conversion_factor_with_unit<Ts...>() );
 }
 
-template<class ... Lhs, class Rhs>
-constexpr auto do_simplify( mixed_unit<Lhs...> const &,
-                            Rhs const & rhs )
+template<class Lhs>
+constexpr auto do_simplify( Lhs const & lhs )
 {
-    return simplifies( conversion_factor_with_unit<Lhs...>(),
-                       rhs );
+    return simplifies( conversion_factor_with_unit<>(), lhs );
 }
 
-template<class Lhs, class ... Rhs>
-constexpr auto do_simplify( Lhs const & lhs,
-                            mixed_unit<Rhs...> const & )
+constexpr auto do_simplify( dimensionless )
 {
-    return simplifies( lhs,
-                       conversion_factor_with_unit<Rhs...>() );
-}
-
-template<class Lhs, class Rhs>
-constexpr auto do_simplify( Lhs const & lhs,
-                            Rhs const & rhs )
-{
-    return simplifies( lhs, rhs );
+    return conversion_factor_with_unit<>();
 }
 
 template<class Lhs, class Rhs>
 constexpr auto conversion_factor_helper( Lhs const &,
                                          Rhs const & )
 {
-    return do_simplify( unit_traits<Lhs>::flat(),
-                        unit_traits<Rhs>::flat() );
+    return do_simplify( unit_traits<Lhs>::flat() * unit_traits<Rhs>::flat() );
 }
 
 }

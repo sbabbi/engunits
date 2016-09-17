@@ -98,8 +98,8 @@ void test_is_convertible()
         "joule is not convertible to cm dg / min^2 " );
     
     static_assert( 
-        !is_convertible( si::joule(),
-                         si::kilometer() * si::centimeter() * si::decagram() * minute_<-2>() ),
+        is_convertible( si::joule(),
+                        si::kilometer() * si::centimeter() * si::decagram() * minute_<-2>() ),
         "joule is convertible to km cm dg / min^2 " );
     
     static_assert( 
@@ -121,6 +121,16 @@ void test_is_convertible()
         !is_convertible( imperial::pound_force(),
                          si::joule() ),
         "lbf is NOT convertible to joule" );
+    
+    static_assert( 
+        is_convertible( minute(),
+                        imperial::foot() * second() * si::meter_<-1>() ),
+        "minute is convertible to ft * second / meter" );
+
+    static_assert( 
+        is_convertible( imperial::foot() * second() * si::meter_<-1>(),
+                        minute() ),
+        "ft * second / meter is convertible to minute" );
 }
 
 void test_base_conversion()

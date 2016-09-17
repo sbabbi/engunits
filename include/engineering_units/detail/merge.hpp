@@ -59,6 +59,49 @@ class merge_t
         return typename Predicate<T,U>::type {};
     }
     
+    //
+    // Actual merging
+    template<class Lhs, class ... Ts>
+    constexpr auto merge_nonempty( const Lhs & lhs,
+                                   const Sequence<Ts...> & rhs,
+                                   std::true_type /*pred */) const
+    {
+        return Traits::join( Traits::pop_back( rhs ),
+                             Traits::join( lhs, Traits::back( rhs ) ) );
+    }
+
+    template<class Lhs, class ... Ts>
+    constexpr auto merge_nonempty( const Lhs & lhs,
+                                   const Sequence<Ts...> & rhs,
+                                   std::false_type /*pred */ ) const
+    {
+        return Traits::join(
+                   merge( lhs, Traits::pop_back( rhs ) ),
+                   Traits::back( rhs ) );
+    }
+
+    template<class ... Ts, class Rhs>
+    constexpr auto merge_nonempty( const Sequence<Ts... > & lhs,
+                                   const Rhs & rhs,
+                                   std::true_type /*pred */ ) const
+    {
+        return Traits::join(
+                   Traits::join( Traits::front( lhs ), rhs ),
+                   Traits::pop_front( lhs ) );
+    }
+
+    template<class ... Ts, class Rhs>
+    constexpr auto merge_nonempty( const Sequence<Ts... > & lhs,
+                                   const Rhs & rhs,
+                                   std::false_type /*pred */ ) const
+    {
+        return Traits::join(
+                   Traits::front( lhs ),
+                   merge( Traits::pop_front( lhs ), rhs ) );
+    }
+
+    //
+    // Work around empty sequences
     template<class ... Lhs, class ... Rhs>
     constexpr auto merge_helper( const Sequence<Lhs...> & lhs,
                                  const Sequence<Rhs...> & rhs,
@@ -84,7 +127,9 @@ class merge_t
                                  std::false_type,
                                  std::true_type ) const
     {
-        return Traits::join(lhs, rhs);
+        return merge( 
+            Traits::join(lhs, Traits::front(rhs) ),
+            Traits::pop_front(rhs) );
     }
     
     template<class ... None>
@@ -95,58 +140,55 @@ class merge_t
     {
         return Traits::join(lhs, rhs);
     }
-
-    template<class Lhs, class ... Ts>
-    constexpr auto merge( const Lhs & lhs,
-                          const Sequence<Ts...> & rhs,
-                          std::true_type ) const
+    
+    template<class ... None, class Rhs>
+    constexpr auto merge_helper( const Sequence<None...> & lhs,
+                                 const Rhs & rhs,
+                                 std::false_type ) const
     {
-        return Traits::join( Traits::pop_back( rhs ),
-                             Traits::join( lhs, Traits::back( rhs ) ) );
+        return Traits::join(lhs, rhs);
     }
-
-    template<class Lhs, class ... Ts>
-    constexpr auto merge( const Lhs & lhs,
-                          const Sequence<Ts...> & rhs,
-                          std::false_type ) const
-    {
-        return Traits::join(
-                   merge( lhs, Traits::pop_back( rhs ) ),
-                   Traits::back( rhs ) );
-    }
-
+    
     template<class ... Ts, class Rhs>
-    constexpr auto merge( const Sequence<Ts... > & lhs,
-                          const Rhs & rhs,
-                          std::true_type ) const
+    constexpr auto merge_helper( const Sequence<Ts...> & lhs,
+                                 const Rhs & rhs,
+                                 std::true_type ) const
     {
-        return Traits::join(
-                   Traits::join( Traits::front( lhs ), rhs ),
-                   Traits::pop_front( lhs ) );
+        return merge_nonempty(lhs, rhs, pred( Traits::front(lhs), rhs ) );
     }
-
-    template<class ... Ts, class Rhs>
-    constexpr auto merge( const Sequence<Ts... > & lhs,
-                          const Rhs & rhs,
-                          std::false_type ) const
+    
+    template<class Lhs, class ... None>
+    constexpr auto merge_helper( const Lhs & lhs,
+                                 const Sequence<None...> & rhs,
+                                 std::false_type ) const
     {
-        return Traits::join(
-                   Traits::front( lhs ),
-                   merge( Traits::pop_front( lhs ), rhs ) );
+        return Traits::join(lhs, rhs);
+    }
+    
+    template<class Lhs, class ... Ts>
+    constexpr auto merge_helper( const Lhs & lhs,
+                                 const Sequence<Ts...> & rhs,
+                                 std::true_type ) const
+    {
+        return merge_nonempty( lhs, rhs, pred( lhs, Traits::back( rhs ) ) );
     }
 
     template<class Lhs, class ... Ts>
     constexpr auto merge( const Lhs & lhs,
                           const Sequence<Ts...> & rhs ) const
     {
-        return merge( lhs, rhs, pred( lhs, Traits::back( rhs ) ) );
+        return merge_helper( lhs,
+                             rhs,
+                            std::integral_constant< bool, (sizeof ... (Ts) > 0) >{} );
     }
 
     template<class ... Ts, class Rhs>
     constexpr auto merge( const Sequence<Ts...> & lhs,
                           const Rhs & rhs ) const
     {
-        return merge( lhs, rhs, pred( Traits::front( lhs ), rhs ) );
+        return merge_helper( lhs,
+                             rhs,
+                             std::integral_constant< bool, (sizeof ... (Ts) > 0) >{} );
     }
 
     template<class Lhs, class Rhs>
