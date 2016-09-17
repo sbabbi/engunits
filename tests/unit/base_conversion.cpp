@@ -28,6 +28,7 @@
 
 #include <engineering_units/si/length.hpp>
 #include <engineering_units/imperial/length.hpp>
+#include <engineering_units/imperial/mass.hpp>
 
 void test_convert_base_unit()
 {
@@ -53,7 +54,7 @@ void test_convert_base_unit()
                    "feet to inch = 12.0L" );
     
     static_assert( convert_base_unit(imperial::inch(), si::meter() ) == 
-                   (1.0L/0.3048L) * 12.0L,
+                   (0.3048L * (1.0L / 12.0L) ),
                    "inch to meter = (inch to feet) * (feet to meter) = "
                    "1.0 / 12.0L * 0.3048L" );
     
@@ -69,6 +70,13 @@ void test_convert_base_unit()
         "millimeter to inch = "
         "(millimeter to meter) * (meter to feet) * (feet to inch) = "
         "0.001L * (1.0L / 0.3048L) * 12.0L" );
+    
+    static_assert(
+        double( convert_base_unit(imperial::slug(), si::kilogram() ) ) ==
+        double( (32.174049L * 0.45359237L) ),
+        "slug to kilogram = (slug to pound) * (pound to kilogram) = "
+        "32.174049 * 0.45359237 = 14.59390313840613" );
+
 }
 
 void test_convert_base_unit_exp()
@@ -99,7 +107,7 @@ void test_convert_base_unit_exp()
         "(feet^(1/2) to inch^(1/2) )^2 = 12.0L" );
     
     static_assert( convert_base_unit(imperial::inch_<2>(), si::meter_<2>() ) == 
-                   ((1.0L/0.3048L) * 12.0L) * ((1.0L/0.3048L) * 12.0L),
+                   ( 0.3048L * (1.0L / 12.0L) * 0.3048L * (1.0L / 12.0L) ),
                    "inch^2 to meter^2 = ( (inch to feet) * (feet to meter) )^2 ="
                    "1.0 / 12.0L * 0.3048L" );
     

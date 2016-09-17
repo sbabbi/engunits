@@ -111,8 +111,8 @@ constexpr auto dispatch_convert_base_unit( const T & t,
                                             int
                                            > = 0 )
 {
-    return dispatch_convert_base_unit( u, typename T::parent_unit {}, convert_via_parent_tag {} ) *
-           dispatch_convert_base_unit( typename T::parent_unit {}, t, convert_via_parent_tag {} );
+    return dispatch_convert_base_unit( t, typename T::parent_unit {}, convert_via_parent_tag {} ) *
+           dispatch_convert_base_unit( typename T::parent_unit {}, u, convert_via_parent_tag {} );
 }
 
 template<class T, class U>
