@@ -96,6 +96,11 @@ void test_base()
     
     static_assert( TEST_SINS meter() != newton_copy(),
                    "meter != newton_copy" );
+    
+    static_assert(
+        TEST_SINS meter() * TEST_SINS kilogram() * TEST_ENGNS second_<-2>() ==
+        TEST_SINS newton(),
+        "meter * kilogram * second^-2 == newton" );
 }
 
 void test_mixed()

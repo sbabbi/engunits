@@ -58,6 +58,43 @@ class merge_t
     {
         return typename Predicate<T,U>::type {};
     }
+    
+    template<class ... Lhs, class ... Rhs>
+    constexpr auto merge_helper( const Sequence<Lhs...> & lhs,
+                                 const Sequence<Rhs...> & rhs,
+                                 std::true_type,
+                                 std::true_type ) const
+    {
+        return merge( merge( lhs, Traits::front( rhs ) ),
+                      Traits::pop_front( rhs ) );
+    }
+    
+    template<class ... Lhs, class ... None>
+    constexpr auto merge_helper( const Sequence<Lhs...> & lhs,
+                                 const Sequence<None...> & rhs,
+                                 std::true_type,
+                                 std::false_type ) const
+    {
+        return Traits::join(lhs, rhs);
+    }
+    
+    template<class ... None, class ... Rhs>
+    constexpr auto merge_helper( const Sequence<None...> & lhs,
+                                 const Sequence<Rhs...> & rhs,
+                                 std::false_type,
+                                 std::true_type ) const
+    {
+        return Traits::join(lhs, rhs);
+    }
+    
+    template<class ... None>
+    constexpr auto merge_helper( const Sequence<None...> & lhs,
+                                 const Sequence<None...> & rhs,
+                                 std::false_type,
+                                 std::false_type ) const
+    {
+        return Traits::join(lhs, rhs);
+    }
 
     template<class Lhs, class ... Ts>
     constexpr auto merge( const Lhs & lhs,
@@ -123,45 +160,10 @@ class merge_t
     constexpr auto merge( const Sequence<Lhs...> & lhs,
                           const Sequence<Rhs...> & rhs ) const
     {
-        return merge( merge( lhs, Traits::front( rhs ) ),
-                      Traits::pop_front( rhs ) );
-    }
-
-    template<class ... Lhs, class ... None>
-    constexpr auto merge( const Sequence<Lhs...> & lhs,
-                          const Sequence<None...> & rhs,
-                          std::enable_if_t<
-                            sizeof ...( None ) == 0,
-                            int
-                          > = 0 ) const
-
-    {
-        return Traits::join( lhs, rhs );
-    }
-
-    template<class ... None, class ... Rhs>
-    constexpr auto merge( const Sequence<None...> & lhs,
-                          const Sequence<Rhs...> & rhs,
-                          std::enable_if_t<
-                            sizeof ...( None ) == 0,
-                            int
-                          > = 0
-                        ) const
-
-    {
-        return Traits::join( lhs, rhs );
-    }
-
-    template<class ... None>
-    constexpr auto merge( const Sequence<None ...> & lhs,
-                          const Sequence<None ...> & rhs,
-                          std::enable_if_t<
-                            sizeof ...( None ) == 0,
-                            int
-                          > = 0 ) const
-
-    {
-        return Traits::join( lhs, rhs );
+        return merge_helper(lhs, 
+                            rhs,
+                            std::integral_constant< bool, (sizeof ... (Lhs) > 0) >{},
+                            std::integral_constant< bool, (sizeof ... (Rhs) > 0) >{} );
     }
 
 public:
