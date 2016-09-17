@@ -27,6 +27,10 @@
 #ifndef ENGINEERING_UNITS_ANGLE_HPP
 #define ENGINEERING_UNITS_ANGLE_HPP
 
+#include <cmath>
+
+#include <engineering_units/quantity.hpp>
+
 #include <engineering_units/unit/helper_macros.hpp>
 
 namespace engunits
@@ -41,6 +45,48 @@ ENGUNITS_DEFINE_UDL( radian, rad )
 ENGUNITS_DEFINE_UDL( degree, deg )
 
 ENGUNITS_IMPORT_OPERATORS
+
+template<class T>
+constexpr auto sin( const quantity<T, radian > & x )
+{
+    using std::sin;
+    return sin(x.value());
+}
+
+template<class T>
+constexpr auto cos( const quantity<T, radian > & x )
+{
+    using std::cos;
+    return cos(x.value());
+}
+
+template<class T>
+constexpr auto tan( const quantity<T, radian > & x )
+{
+    using std::tan;
+    return tan(x.value());
+}
+
+template<class T>
+constexpr auto sin( const quantity<T, degree > & x )
+{
+    using std::sin;
+    return sin(x.value() * conversion_factor(degree(), radian() ));
+}
+
+template<class T>
+constexpr auto cos( const quantity<T, degree > & x )
+{
+    using std::cos;
+    return cos(x.value() * conversion_factor(degree(), radian() ));
+}
+
+template<class T>
+constexpr auto tan( const quantity<T, degree > & x )
+{
+    using std::tan;
+    return tan(x.value() * conversion_factor(degree(), radian() ));
+}
 
 }
 

@@ -41,7 +41,12 @@ ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
 ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
 ENGUNITS_IMPORT_OPERATORS
 
+namespace literals
+{
+
 ENGUNITS_DEFINE_UDL( newton, N )
+
+}
 
 }
 }

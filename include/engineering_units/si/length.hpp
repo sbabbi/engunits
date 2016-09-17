@@ -42,9 +42,15 @@ ENGUNITS_DEFINE_BASE_UNIT( decameter, dam, meter, 10.0L );
 ENGUNITS_DEFINE_BASE_UNIT( hectometer, hm, meter, 100.0L );
 ENGUNITS_DEFINE_BASE_UNIT( kilometer,  km, meter, 1000.0L );
 
+namespace literals
+{
+
 ENGUNITS_DEFINE_UDL( meter, m )
 ENGUNITS_DEFINE_UDL( millimeter, mm )
 ENGUNITS_DEFINE_UDL( kilometer, km )
+
+}
+
 ENGUNITS_IMPORT_OPERATORS
 
 }

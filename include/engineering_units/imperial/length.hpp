@@ -42,8 +42,13 @@ ENGUNITS_DEFINE_BASE_UNIT( inch, in, foot, ( 1.0L / 12.0L ) );
 ENGUNITS_DEFINE_BASE_UNIT( nautical_mile, NM, si::meter, 1852.0L );
 ENGUNITS_IMPORT_OPERATORS
 
+namespace literals
+{
+
 ENGUNITS_DEFINE_UDL( foot, ft )
 ENGUNITS_DEFINE_UDL( nautical_mile, NM )
+
+}
 
 }
 }

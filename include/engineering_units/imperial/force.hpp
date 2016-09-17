@@ -40,7 +40,12 @@ namespace imperial
 ENGUNITS_DEFINE_DERIVED_UNIT( pound_force, lbf, slug, foot, second_<-2> );
 ENGUNITS_IMPORT_OPERATORS
 
+namespace literals
+{
+
 ENGUNITS_DEFINE_UDL( pound_force, lbf )
+
+}
 
 }
 }
