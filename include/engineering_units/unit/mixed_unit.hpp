@@ -31,7 +31,6 @@
 
 #include <engineering_units/unit/traits.hpp>
 #include <engineering_units/unit/predicates.hpp>
-#include <engineering_units/unit/pow.hpp>
 
 #include <engineering_units/detail/fold_expressions.hpp>
 
@@ -98,6 +97,30 @@ struct mixed_unit
     }
 };
 
+namespace detail
+{
+
+template<std::intmax_t N, std::intmax_t D = 1>
+struct pow_helper
+{
+    template<class U>
+    struct apply
+    {
+        using result_exp = std::ratio_multiply<
+            typename unit_traits<U>::exponent,
+            std::ratio<N, D>
+        >;
+
+        typedef typename unit_traits<U>::template
+            base_< result_exp::num, result_exp::den > type;
+    };
+    
+    template<class U>
+    using apply_t = typename apply<U>::type;
+};
+
+}
+
 /**
  * @brief Specialize @c unit_traits for @c mixed_unit.
  * 
@@ -116,7 +139,7 @@ struct unit_traits< mixed_unit<Ts ... > >
 
     template< std::intmax_t N, std::intmax_t D = 1 >
     using base_ = mixed_unit<
-        detail::pow_t<Ts, std::ratio<N,D> > ...
+        typename detail::pow_helper<N,D>::template apply_t<Ts> ... 
     >;
 
     static constexpr auto flat() 

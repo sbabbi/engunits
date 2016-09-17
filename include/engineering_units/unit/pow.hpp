@@ -31,13 +31,11 @@
 #include <type_traits>
 
 #include <engineering_units/unit/traits.hpp>
+#include <engineering_units/unit/mixed_unit.hpp>
 
 namespace engunits
 {
     
-template<class ... Ts>
-struct mixed_unit;
-
 namespace detail
 {
 
@@ -67,14 +65,6 @@ constexpr auto pow( const Base &,
                     > = 0 )
 {
     return detail::pow_t<Base, Exponent>{};
-}
-
-template<class ... Ts, class Exponent>
-constexpr auto pow( const mixed_unit<Ts...> &,
-                    Exponent )
-{
-    return mixed_unit<
-           decltype( pow<Ts, Exponent>( {}, {} ) ) ... > {};
 }
 
 template<class T>
