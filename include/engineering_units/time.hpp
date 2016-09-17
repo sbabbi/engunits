@@ -24,14 +24,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_TIME_HPP
-#define ENGINEERING_UNITS_SI_TIME_HPP
+#ifndef ENGINEERING_UNITS_TIME_HPP
+#define ENGINEERING_UNITS_TIME_HPP
 
 #include <engineering_units/unit/helper_macros.hpp>
 
 namespace engunits
-{
-namespace si
 {
 
 ENGUNITS_DEFINE_ROOT_UNIT( second, s, time );
@@ -43,7 +41,6 @@ ENGUNITS_DEFINE_BASE_UNIT( hour,         h, second, 3600.0L );
 
 ENGUNITS_IMPORT_OPERATORS
 
-}
 }
 
 #endif //ENGINEERING_UNITS_SI_TIME_HPP

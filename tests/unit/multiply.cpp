@@ -24,8 +24,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <engineering_units/time.hpp>
 #include <engineering_units/si/length.hpp>
-#include <engineering_units/si/time.hpp>
 #include <engineering_units/si/mass.hpp>
 #include <engineering_units/si/force.hpp>
 
@@ -88,13 +88,13 @@ void test_dimensionless()
         " dimensionless * newton * dimensionless == newton " );
     
     static_assert( 
-        is_same( TEST_ENGNS dimensionless() * TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_SINS second>(),
-                 TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_SINS second>() ),
+        is_same( TEST_ENGNS dimensionless() * TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_ENGNS second>(),
+                 TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_ENGNS second>() ),
         " dimensionless * (meter * second) == (meter * second)" );
     
     static_assert( 
-        is_same( TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_SINS second>() * TEST_ENGNS dimensionless(),
-                 TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_SINS second>() ),
+        is_same( TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_ENGNS second>() * TEST_ENGNS dimensionless(),
+                 TEST_ENGNS mixed_unit<TEST_SINS meter, TEST_ENGNS second>() ),
         " (meter * second) * dimensionless == (meter * second)" );
 }
 
@@ -145,50 +145,50 @@ void test_mixed()
     
     static_assert(
         is_same( TEST_SINS meter() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS meter_<-1>, TEST_SINS second >(),
-                 TEST_SINS second() ),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter_<-1>, TEST_ENGNS second >(),
+                 TEST_ENGNS second() ),
                  " meter * <meter^-1, second> == second" );
     
     static_assert(
         is_same( TEST_SINS meter() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second >(),
-                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_SINS second >() ),
+                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second >(),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_ENGNS second >() ),
                  " meter * <kilogram, second> == <meter, kilogram, second>" );
     
     static_assert(
-        is_same( TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second >() *
+        is_same( TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second >() *
                  TEST_SINS meter(),
-                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second, TEST_SINS meter >() ),
+                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second, TEST_SINS meter >() ),
                  " <kilogram, second> * meter == <kilogram, second, meter>" );
     
     static_assert(
         is_same( TEST_SINS meter() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_SINS second >(),
-                 TEST_ENGNS mixed_unit< TEST_SINS meter_<2>, TEST_SINS kilogram, TEST_SINS second >() ),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_ENGNS second >(),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter_<2>, TEST_SINS kilogram, TEST_ENGNS second >() ),
                  " meter * <meter, kilogram, second> == <meter^2, kilogram, second>" );
     
     static_assert(
-        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_SINS second >() *
-                 TEST_SINS second(),
-                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_SINS second_<2> >() ),
+        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_ENGNS second >() *
+                 TEST_ENGNS second(),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_ENGNS second_<2> >() ),
                  " <meter, kilogram, second> * second == <meter, kilogram, second<2>>" );
 
     static_assert(
-        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS second_<-1>, TEST_SINS meter_<-1> >(),
+        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() * 
+                 TEST_ENGNS mixed_unit< TEST_ENGNS second_<-1>, TEST_SINS meter_<-1> >(),
                  TEST_ENGNS dimensionless() ),
                  " <meter, second> * <second^-1, meter^-1> == dimensionless" );
     
     static_assert(
-        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_SINS second >() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS second_<-1>, TEST_SINS meter_<-1> >(),
+        is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram, TEST_ENGNS second >() * 
+                 TEST_ENGNS mixed_unit< TEST_ENGNS second_<-1>, TEST_SINS meter_<-1> >(),
                  TEST_SINS kilogram() ),
                  " <meter, kilogram, second> * <second^-1, meter^-1> == kilogram" );
     
     static_assert(
         is_same( TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS kilogram >() * 
-                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second_<-1>, TEST_SINS meter_<2> >(),
-                 TEST_ENGNS mixed_unit< TEST_SINS meter_<3>, TEST_SINS kilogram_<2>, TEST_SINS second_<-1> >() ),
+                 TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second_<-1>, TEST_SINS meter_<2> >(),
+                 TEST_ENGNS mixed_unit< TEST_SINS meter_<3>, TEST_SINS kilogram_<2>, TEST_ENGNS second_<-1> >() ),
                  " <meter, kilogram> * <kilogram, second^-1, meter^2> == <meter^3, kilogram^2, second^-1> " );
 }
 

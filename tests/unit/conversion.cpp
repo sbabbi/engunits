@@ -26,8 +26,8 @@
 
 #include <engineering_units/unit/conversion.hpp>
 
+#include <engineering_units/time.hpp>
 #include <engineering_units/si/length.hpp>
-#include <engineering_units/si/time.hpp>
 #include <engineering_units/si/mass.hpp>
 #include <engineering_units/si/force.hpp>
 #include <engineering_units/imperial/length.hpp>
@@ -37,9 +37,10 @@ void test_derived_conversion()
     namespace si = engunits::si;
     namespace imperial = engunits::imperial;
     using engunits::mixed_unit;
+    using engunits::second_;
     
-    auto x1 = mixed_unit<si::meter, si::second_<-1> >();
-    auto x2 = mixed_unit<imperial::feet, si::second_<-1> >();
+    auto x1 = mixed_unit<si::meter, second_<-1> >();
+    auto x2 = mixed_unit<imperial::feet, second_<-1> >();
     
     static_assert( 
         double( engunits::conversion_factor(x1, x2) ) ==

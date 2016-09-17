@@ -87,7 +87,7 @@ namespace engunits
             return engunits::detail::make_string_literal(#symbol);   \
         }                                                            \
         typedef parent parent_unit;                                  \
-        typedef typename parent::dimension_tag dimension_tag;        \
+        typedef parent::dimension_tag dimension_tag;                 \
         static constexpr long double to_parent = conv_factor;        \
     };                                                               \
     using name = name##_<1>
@@ -103,7 +103,9 @@ namespace engunits
         }                                                           \
         static constexpr auto flat()                                \
         {                                                           \
-            return engunits::mixed_unit< __VA_ARGS__ >{};           \
+            return engunits::unit_traits<                           \
+                engunits::mixed_unit< __VA_ARGS__ >                 \
+            >::flat();                                              \
         }                                                           \
     };                                                              \
     using name = name##_<1> 

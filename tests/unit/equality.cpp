@@ -24,8 +24,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <engineering_units/time.hpp>
 #include <engineering_units/si/length.hpp>
-#include <engineering_units/si/time.hpp>
 #include <engineering_units/si/mass.hpp>
 #include <engineering_units/si/force.hpp>
 
@@ -34,7 +34,7 @@
 ENGUNITS_DEFINE_DERIVED_UNIT( newton_copy, Nc, 
                               engunits::si::meter, 
                               engunits::si::kilogram, 
-                              engunits::si::second_<-2> );
+                              engunits::second_<-2> );
 
 
 // using namespace can do fancy things with ADL, better test
@@ -70,7 +70,7 @@ void test_dimensionless()
                     "dimensionless != meter^3" );
     
     static_assert( TEST_ENGNS dimensionless() != 
-                   TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second>(),
+                   TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second>(),
                     "dimensionless != <meter, second>" );
 }
 
@@ -85,10 +85,10 @@ void test_base()
     static_assert( TEST_SINS meter() == TEST_SINS meter_<4,4>(),
                    "meter == meter_^(4/4)>" );
     
-    static_assert( TEST_SINS meter() != TEST_SINS second(),
+    static_assert( TEST_SINS meter() != TEST_ENGNS second(),
                    "meter != second" );
     
-    static_assert( TEST_SINS meter() != TEST_SINS second_<3>(),
+    static_assert( TEST_SINS meter() != TEST_ENGNS second_<3>(),
                    "meter != second^3" );
     
     static_assert( TEST_SINS newton() == newton_copy(),
@@ -101,62 +101,62 @@ void test_base()
 void test_mixed()
 {
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() ==
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() ==
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >(),
         "<meter, second> == <meter, second>" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() ==
-        TEST_ENGNS mixed_unit< TEST_SINS second, TEST_SINS meter >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() ==
+        TEST_ENGNS mixed_unit< TEST_ENGNS second, TEST_SINS meter >(),
         "<meter, second> == <second, meter>" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second, TEST_SINS kilogram >() ==
-        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second, TEST_SINS meter >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second, TEST_SINS kilogram >() ==
+        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second, TEST_SINS meter >(),
         "<meter, second, kilogram> == <kilogram, second, meter>" );
 
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() !=
-        TEST_SINS second(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() !=
+        TEST_ENGNS second(),
         "<meter, second> == second" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() !=
-        TEST_ENGNS mixed_unit< TEST_SINS meter_<2>, TEST_SINS second >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() !=
+        TEST_ENGNS mixed_unit< TEST_SINS meter_<2>, TEST_ENGNS second >(),
         "<meter, second> != <meter^2, second>" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() !=
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second, TEST_SINS kilogram >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() !=
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second, TEST_SINS kilogram >(),
         "<meter, second> != <meter, second, kilogram>" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second >() !=
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second_<-1> >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second >() !=
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second_<-1> >(),
         "<meter, second> != <meter, second^-1>" );
     
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS second, TEST_SINS kilogram >() !=
-        TEST_ENGNS mixed_unit< TEST_SINS newton, TEST_SINS second, TEST_SINS meter >(),
+        TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_ENGNS second, TEST_SINS kilogram >() !=
+        TEST_ENGNS mixed_unit< TEST_SINS newton, TEST_ENGNS second, TEST_SINS meter >(),
         "<meter, second, kilogram> != <newton, second, meter>" );
     
     static_assert(
         TEST_SINS newton() ==
-        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second_<-2>, TEST_SINS meter >(),
+        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second_<-2>, TEST_SINS meter >(),
         "newton == <kilogram, second^-2, meter>" );
     
     static_assert(
         TEST_SINS newton() ==
-        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS meter, TEST_SINS second_<-2> >(),
+        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS meter, TEST_ENGNS second_<-2> >(),
         "newton == <kilogram, meter, second^-2 >" );
     
     static_assert(
         TEST_ENGNS mixed_unit< TEST_SINS meter, TEST_SINS newton >() ==
-        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_SINS second_<-2>, TEST_SINS meter_<2> >(),
+        TEST_ENGNS mixed_unit< TEST_SINS kilogram, TEST_ENGNS second_<-2>, TEST_SINS meter_<2> >(),
         "<meter, newton> == <kilogram, second^-2, meter^2>" );
 
     static_assert(
-        TEST_ENGNS mixed_unit< TEST_SINS newton, TEST_SINS second_<2>, TEST_SINS kilogram_<-1> >() ==
+        TEST_ENGNS mixed_unit< TEST_SINS newton, TEST_ENGNS second_<2>, TEST_SINS kilogram_<-1> >() ==
         TEST_SINS meter(),
         "<newton, second^2, kilogram^-1> == meter" );
 
