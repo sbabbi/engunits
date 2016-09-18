@@ -24,33 +24,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_IMPERIAL_PRESSURE_HPP
+#define ENGINEERING_UNITS_IMPERIAL_PRESSURE_HPP
 
-#include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
+#include <engineering_units/imperial/force.hpp>
 
 namespace engunits
 {
-namespace si
+namespace imperial
 {
-
+    
 /**
  * @addtogroup predef_units
  * @{
  */
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( kilonewton, kN, kilometer, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( pound_square_inch, psi, pound_force, inch_<-2> );
 ENGUNITS_IMPORT_OPERATORS
 
 namespace literals
 {
 
-ENGUNITS_DEFINE_UDL( newton, N )
+ENGUNITS_DEFINE_UDL( pound_square_inch, psi )
 
 }
 
@@ -59,5 +55,5 @@ ENGUNITS_DEFINE_UDL( newton, N )
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
+#endif //ENGINEERING_UNITS_IMPERIAL_PRESSURE_HPP
 

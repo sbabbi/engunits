@@ -24,33 +24,44 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_SI_FORCE_HPP
-#define ENGINEERING_UNITS_SI_FORCE_HPP
+#ifndef ENGINEERING_UNITS_SI_PRESSURE_HPP
+#define ENGINEERING_UNITS_SI_PRESSURE_HPP
 
-#include <engineering_units/time.hpp>
 #include <engineering_units/unit/helper_macros.hpp>
-#include <engineering_units/si/length.hpp>
-#include <engineering_units/si/mass.hpp>
+#include <engineering_units/si/force.hpp>
 
 namespace engunits
 {
 namespace si
 {
 
+namespace detail
+{
+ENGUNITS_DEFINE_BASE_UNIT( kiloair, , kilogram, 101.325L );
+}
 /**
  * @addtogroup predef_units
  * @{
  */
 
-ENGUNITS_DEFINE_DERIVED_UNIT( newton, N, meter, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( kilonewton, kN, kilometer, kilogram, second_<-2> );
-ENGUNITS_DEFINE_DERIVED_UNIT( dyne, dyn, centimeter, gram, second_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( pascal, Pa, newton, meter_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( hectopascal, hPa, newton, decimeter_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( bar, bar, newton, centimeter_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( kilopascal, kPa, kilonewton, meter_<-2> );
+ENGUNITS_DEFINE_DERIVED_UNIT( megapascal, MPa, newton, millimeter_<-2> );
+
+ENGUNITS_DEFINE_DERIVED_UNIT( atmosphere, atm, detail::kiloair, millimeter_<-1>, second_<-2> );
+
 ENGUNITS_IMPORT_OPERATORS
 
 namespace literals
 {
 
-ENGUNITS_DEFINE_UDL( newton, N )
+ENGUNITS_DEFINE_UDL( pascal, Pa )
+ENGUNITS_DEFINE_UDL( hectopascal, hPa )
+ENGUNITS_DEFINE_UDL( kilopascal, kPa )
+ENGUNITS_DEFINE_UDL( megapascal, MPa )
+ENGUNITS_DEFINE_UDL( atmosphere, atm )
 
 }
 
@@ -59,5 +70,6 @@ ENGUNITS_DEFINE_UDL( newton, N )
 }
 }
 
-#endif //ENGINEERING_UNITS_SI_FORCE_HPP
+#endif //ENGINEERING_UNITS_SI_PRESSURE_HPP
+
 

@@ -32,10 +32,12 @@
 #include <engineering_units/si/mass.hpp>
 #include <engineering_units/si/force.hpp>
 #include <engineering_units/si/energy.hpp>
+#include <engineering_units/si/pressure.hpp>
 
 #include <engineering_units/imperial/length.hpp>
 #include <engineering_units/imperial/mass.hpp>
 #include <engineering_units/imperial/force.hpp>
+#include <engineering_units/imperial/pressure.hpp>
 
 namespace si = engunits::si;
 namespace imperial = engunits::imperial;
@@ -277,6 +279,16 @@ void test_derived_conversion()
                                    si::joule() ) ) ==
         double( 32.174049L * 0.45359237L * 0.3048L * 0.3048L ), 
         "lbf ft to joule" );
+    
+    static_assert( 
+        double( conversion_factor( si::atmosphere(), si::kilopascal() ) ) ==
+        double( 101.325L ),
+        "pascal to atm" );
+
+    static_assert( 
+        double( conversion_factor( imperial::pound_square_inch(), si::pascal() ) ) ==
+        double( (0.45359237L * 32.174049L) * 12.0L * 12.0L / 0.3048L),
+        "pascal to atm" );
 }
 
 int main()
