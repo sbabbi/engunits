@@ -24,8 +24,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ENGINEERING_UNITS_UNIT_IO_HPP
-#define ENGINEERING_UNITS_UNIT_IO_HPP
+#ifndef ENGINEERING_UNITS_IO_HPP
+#define ENGINEERING_UNITS_IO_HPP
 
 #include <iosfwd>
 
@@ -58,4 +58,4 @@ std::ostream& operator<<(std::ostream & os, quantity<T, Units...> const & x)
 
 }
 
-#endif //ENGINEERING_UNITS_UNIT_TRAITS_HPP
+#endif //ENGINEERING_UNITS_IO_HPP

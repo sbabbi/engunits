@@ -28,7 +28,7 @@
 #include <iostream>
 
 #include <engineering_units/quantity.hpp>
-#include <engineering_units/unit/io.hpp>
+#include <engineering_units/io.hpp>
 
 #include <engineering_units/angle.hpp>
 #include <engineering_units/time.hpp>
