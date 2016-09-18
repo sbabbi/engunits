@@ -26,6 +26,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <limits>
 
 #include <engineering_units/quantity.hpp>
 #include <engineering_units/io.hpp>
@@ -131,7 +132,10 @@ void test_functions()
 
     // no hypot(a,b,c) pre C++17
     //assert( fabs( hypot(3.0_m, 4.0_m, 0.0_m) - 5.0_m ) < 1e-15_m );
-
+    
+    assert( fabs(sin(90.0_deg) - 1.0) < 1e-10 );
+    assert( fabs(cos(90.0_deg)) < 1e-10 );
+    assert( fabs(tan(45.0_deg) - 1.0 ) < 1e-10 );
 }
 
 int main() 

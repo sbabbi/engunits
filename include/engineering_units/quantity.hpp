@@ -288,7 +288,7 @@ public:
         return unit_type {};
     }
     
-    explicit operator const T&() const &
+    explicit operator T() const &
     {
         static_assert( is_convertible_v<unit_type, dimensionless>,
                        "Use .value() to cast away the unit" );
@@ -296,15 +296,7 @@ public:
         return value_ * conversion_factor( unit(), dimensionless() );
     }
     
-    explicit operator T&() &
-    {
-        static_assert( is_convertible_v<unit_type, dimensionless>,
-                       "Use .value() to cast away the unit" );
-        
-        return value_ * conversion_factor( unit(), dimensionless() );
-    }
-    
-    explicit operator T&&() &&
+    explicit operator T() &&
     {
         static_assert( is_convertible_v<unit_type, dimensionless>,
                        "Use .value() to cast away the unit" );
@@ -393,8 +385,8 @@ template<class ... To, class T, class ... Ts>
 constexpr auto quantity_cast( const quantity<T, Ts ... > & u )
 {
     auto unit = detail::multiply( dimensionless(), To() ... );
-    return make_quantity( u.value() * conversion_factor( u.unit(), unit ),
-                          unit );
+    return make_quantity<T>( u.value() * conversion_factor( u.unit(), unit ),
+                             unit );
 }
 
 namespace detail
