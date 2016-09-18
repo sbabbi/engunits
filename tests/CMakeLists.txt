@@ -61,3 +61,9 @@ target_compile_definitions( multiply_test_with_ns PRIVATE "ENGUNITS_WITH_USING_N
 
 add_test( NAME multiply_test         COMMAND multiply_test )
 add_test( NAME multiply_test_with_ns COMMAND multiply_test_with_ns )
+
+## symbol
+add_executable( symbol_test unit/symbol.cpp )
+target_link_libraries( symbol_test engineering_units )
+
+add_test( NAME symbol_test COMMAND symbol_test )

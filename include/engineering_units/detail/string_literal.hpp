@@ -28,6 +28,7 @@
 #define ENGINEERING_UNITS_DETAIL_STRING_LITERAL_HPP
 
 #include <iosfwd>
+#include <ratio>
 #include <string>
 #include <type_traits>
 
@@ -40,7 +41,7 @@ namespace detail
 template<std::size_t N>
 struct string_literal
 {
-    string_literal( const char( &x )[N+1] ) : v_ {}
+    constexpr string_literal( const char( &x )[N+1] ) : v_ {}
     {
         for ( std::size_t i = 0; i < N; ++i )
             v_[i] = x[i];
@@ -59,19 +60,25 @@ struct string_literal
     }
 
     template<std::size_t U>
-    string_literal<N+U> operator+( const string_literal<U> & other ) const noexcept
+    constexpr string_literal<N+U> operator+( const string_literal<U> & other ) const noexcept
     {
-        char buff[U+N+1];
+        char buff[U+N+1] = {};
 
-        for ( int i = 0; i < N; ++i )
+        for ( std::size_t i = 0; i < N; ++i )
             buff[i] = v_[i];
 
-        for ( int i = 0; i < U; ++i )
+        for ( std::size_t i = 0; i < U; ++i )
             buff[i + N] = other[i];
 
         buff[U+N] = 0;
 
         return string_literal<N+U>( buff );
+    }
+    
+    template<std::size_t M>
+    constexpr auto operator+( const char (& other)[M] ) const noexcept
+    {
+        return *this + string_literal<M-1>(other);
     }
 
     operator std::string() const
@@ -84,15 +91,115 @@ private:
 };
 
 template<std::size_t N>
-std::ostream & operator<<( std::ostream & os, string_literal<N> const & s )
-{
-    return os << s.c_str();
-}
-
-template<std::size_t N>
 constexpr string_literal<N-1> make_string_literal( const char( &x )[N] )
 {
     return string_literal<N-1>( x );
+}
+
+template<std::size_t M, std::size_t N>
+constexpr bool operator==(const string_literal<M> &, const string_literal<N> & )
+{
+    return false;
+}
+
+template<std::size_t N>
+constexpr bool operator==(const string_literal<N> & l, const string_literal<N> & r)
+{
+    for ( std::size_t i = 0; i < N; ++i )
+        if ( l[i] != r[i] )
+            return false;
+    return true;
+}
+
+template<std::size_t M, std::size_t N>
+constexpr bool operator==(const string_literal<M> & l, const char (&r)[N] )
+{
+    return l == make_string_literal(r);
+}
+
+template<std::size_t M, std::size_t N>
+constexpr bool operator==(const char (&l)[M], const string_literal<N> & r )
+{
+    return make_string_literal(l) == r;
+}
+
+template< class T >
+constexpr std::size_t digits(T n)
+{
+    return n < 0 ? 1 + digits(-n) : 
+           n < 10 ? 1 :
+           1 + digits(n / 10);
+}
+
+template<std::intmax_t N>
+constexpr auto int_to_string_literal( std::integral_constant< std::intmax_t, N > )
+{
+    constexpr std::size_t n = digits(N);
+    
+    char buff[ n + 1 ] = {};
+    
+    std::intmax_t x = N;
+    
+    if ( x < 0 )
+    {
+        x = -x;
+        buff[0] = '-';
+    }
+    
+    for ( std::size_t i = n; i-- > (N < 0 ? 1 : 0); )
+    {
+        buff[i] = (x % 10) + '0';
+        x = x / 10;
+    }
+    
+    return make_string_literal(buff);    
+}
+
+namespace format_symbol_tag
+{
+struct ratio_exp {};
+struct int_exp : ratio_exp {};
+struct unit_exp : int_exp{};
+}
+
+template<std::size_t N, std::intmax_t Num>
+constexpr auto format_symbol( const char ( &x )[N],
+                              std::ratio<Num, Num>,
+                              format_symbol_tag::unit_exp )
+{
+    return make_string_literal(x);
+}
+
+template<std::size_t N, std::intmax_t Num>
+constexpr auto format_symbol( const char ( &x )[N],
+                              std::ratio<Num, 1>,
+                              format_symbol_tag::int_exp )
+{
+    return make_string_literal(x) + "^" +
+           int_to_string_literal( std::integral_constant< std::intmax_t, Num > () );
+}
+
+template<std::size_t N, std::intmax_t Num, std::intmax_t Den>
+constexpr auto format_symbol( const char ( &x )[N],
+                              std::ratio<Num, Den>,
+                              format_symbol_tag::ratio_exp )
+{
+    return make_string_literal(x) + "^(" +
+           int_to_string_literal( std::integral_constant< std::intmax_t, Num > () ) + "/" +
+           int_to_string_literal( std::integral_constant< std::intmax_t, Den > () ) + ")";
+}
+
+template<std::size_t N, std::intmax_t Num, std::intmax_t Den>
+constexpr auto format_symbol( const char ( &x )[N],
+                              std::ratio<Num, Den> exp )
+{
+    return format_symbol( x, exp, format_symbol_tag::unit_exp{} );
+}
+
+template<std::size_t N>
+std::ostream & operator<<( std::ostream & os, string_literal<N> const & s )
+{
+    return os << s.c_str();
 }
 
 }

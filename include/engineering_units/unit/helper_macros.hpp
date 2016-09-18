@@ -75,7 +75,9 @@ namespace engunits
         typedef engunits::base_unit_tag unit_category;              \
         static constexpr auto symbol()                              \
         {                                                           \
-            return engunits::detail::make_string_literal(#sym);     \
+            return engunits::detail::format_symbol(                 \
+                #sym,                                               \
+                std::ratio<Num,Den>() );                            \
         }                                                           \
         typedef dimension dimension_tag;                            \
     };                                                              \
@@ -88,7 +90,9 @@ namespace engunits
         typedef engunits::base_unit_tag unit_category;               \
         static constexpr auto symbol()                               \
         {                                                            \
-            return engunits::detail::make_string_literal(#sym);      \
+            return engunits::detail::format_symbol(                  \
+                #sym,                                                \
+                std::ratio<Num,Den>() );                             \
         }                                                            \
         typedef parent parent_unit;                                  \
         typedef parent::dimension_tag dimension_tag;                 \
@@ -103,7 +107,9 @@ namespace engunits
         typedef engunits::derived_unit_tag unit_category;           \
         static constexpr auto symbol()                              \
         {                                                           \
-            return engunits::detail::make_string_literal(#sym);     \
+            return engunits::detail::format_symbol(                 \
+                #sym,                                               \
+                std::ratio<Num,Den>() );                            \
         }                                                           \
         static constexpr auto flat()                                \
         {                                                           \
