@@ -237,6 +237,16 @@ public:
     {}
     
     /**
+     * @brief Copy constructor
+     */
+    constexpr quantity( const quantity &) = default;
+    
+    /**
+     * @brief Move constructor
+     */
+    constexpr quantity( quantity &&) noexcept = default;
+
+    /**
      * @brief Copy-assignment
      */
     constexpr quantity& operator=(const quantity & other)
@@ -288,20 +298,22 @@ public:
         return unit_type {};
     }
     
-    explicit operator T() const &
+    template< class U, class ... OtherUnits >
+    constexpr ENGUNITS_ENABLE_IF_T(
+        (allow_implicit_constructor<U&&, OtherUnits ... >),
+        quantity ) operator+=( const quantity<U, OtherUnits ...> & other )
     {
-        static_assert( is_convertible_v<unit_type, dimensionless>,
-                       "Use .value() to cast away the unit" );
-        
-        return value_ * conversion_factor( unit(), dimensionless() );
+        value_ += other.value_;
+        return *this;
     }
     
-    explicit operator T() &&
+    template< class U, class ... OtherUnits >
+    constexpr ENGUNITS_ENABLE_IF_T(
+        (allow_implicit_constructor<U&&, OtherUnits ... >),
+        quantity ) operator-=( const quantity<U, OtherUnits ...> & other )
     {
-        static_assert( is_convertible_v<unit_type, dimensionless>,
-                       "Use .value() to cast away the unit" );
-        
-        return std::move(value_) * conversion_factor( unit(), dimensionless() );
+        value_ -= other.value_;
+        return *this;
     }
 
 private:
@@ -336,18 +348,38 @@ constexpr auto make_quantity( T && t, U const & )
     );
 }
 
+template<class T>
+constexpr auto make_quantity( T && t, dimensionless const & )
+{
+    return std::forward<T>(t);
+}
+
+namespace detail
+{
+
 template<class T, class ... Us>
-constexpr auto make_quantity( T && t, mixed_unit<Us...> const & )
+constexpr auto make_quantity_dispatch( T && t, mixed_unit<Us...> const &, std::false_type )
 {
     return quantity< std::remove_reference_t<T>, Us ... >( 
         std::forward<T>(t)
     );
 }
 
-template<class T>
-constexpr auto make_quantity( T && t, dimensionless const & )
+template<class T, class ... Us>
+constexpr auto make_quantity_dispatch( T && t, mixed_unit<Us...> const &, std::true_type )
 {
     return std::forward<T>(t);
+}
+
+}
+
+template<class T, class ... Us>
+constexpr auto make_quantity( T && t, mixed_unit<Us...> const & u )
+{
+    constexpr bool is_dimensionless = (u == dimensionless());
+    return detail::make_quantity_dispatch( std::forward<T>(t),
+                                           u, 
+                                           std::integral_constant<bool, is_dimensionless>() );
 }
 
 /**

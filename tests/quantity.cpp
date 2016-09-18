@@ -130,6 +130,7 @@ void test_functions()
     
     assert( fabs( hypot(3.0_m, 4.0_m) - 5.0_m ) < 1e-15_m );
 
+    using std::fabs;
     // no hypot(a,b,c) pre C++17
     //assert( fabs( hypot(3.0_m, 4.0_m, 0.0_m) - 5.0_m ) < 1e-15_m );
     
