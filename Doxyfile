@@ -4,7 +4,9 @@ PROJECT_BRIEF = "C++14 library for compile-time dimensional analysis"
 
 OUTPUT_DIRECTORY = docs
 
-INPUT           = include
+INPUT           = include README.md 
+USE_MDFILE_AS_MAINPAGE = README.md
+
 FILE_PATTERNS   = *.hpp
 RECURSIVE       = YES
 INCLUDE_PATH    = include

@@ -11,4 +11,5 @@ endif()
 add_library(engineering_units INTERFACE)
 target_include_directories(engineering_units INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_subdirectory(examples)
 add_subdirectory(tests)
