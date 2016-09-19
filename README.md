@@ -9,7 +9,19 @@ Additionally, the library support explicit unit conversions, in order to automat
 
 This library a compiler compliant with the C++14 standard. It has been tested with gcc 6.2.1 and clang 3.8.1.
 
-### Differences with Boost.Units
+### Design criteria
+
+* Readable error messages
+        - No generic template for units. Every unit has its own class.
+        - Detect quantity errors through `static_assert`, no SFINAE.
+        - Derived units are never expanded.
+* Unit conversions must be explicit.
+        - Either via `quantity` explicit constructor, or via `quantity_cast`.
+        - Any operation that has a run-time overhead must be explicitly requested.
+* No concept of "system of measurement".
+        - Allow mixing between different systems: `feet * meters` is perfectly fine.
+        - Multiplication and division never perform any conversion.
+        - If the result of mult/div is dimensionless, it is always returned as the underlying type.
 
 ### Basic usage
 
