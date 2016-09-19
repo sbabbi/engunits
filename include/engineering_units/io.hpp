@@ -51,7 +51,7 @@ ENGUNITS_ENABLE_IF_T(
 template<class T, class ... Units>
 std::ostream& operator<<(std::ostream & os, quantity<T, Units...> const & x)
 {
-    return os << x.value() << x.unit();
+    return os << x.value() << " " << x.unit();
 }
 
 /** @} */

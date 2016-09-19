@@ -45,6 +45,9 @@
 namespace engunits
 {
 
+template<class T, class ... Units>
+class quantity;
+
 namespace detail
 {
 
@@ -62,6 +65,12 @@ struct unit_type<T>
 
 template<class ... Ts>
 using unit_type_t = typename unit_type<Ts...>::type;
+
+template<class T>
+constexpr bool is_quantity_v = false;
+
+template<class T, class ... Ts>
+constexpr bool is_quantity_v<  quantity<T, Ts ...> > = true;
 
 }
 
@@ -145,6 +154,9 @@ public:
     static_assert( sizeof ...( Units ) > 0, "Empty quantity not allowed" );
     static_assert( detail::all_of( is_unit_v<Units> ... ),
                    "quantity must be made of units" );
+    static_assert( !detail::is_quantity_v<T>, "Can not make quantity of quantity");
+    static_assert( detail::none_of(detail::is_quantity_v<Units> ... ), 
+                   "Unit can not be a quantity");
 
     /**
      * @brief Default constructor
