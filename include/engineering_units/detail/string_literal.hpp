@@ -80,6 +80,8 @@ struct string_literal
     {
         return *this + string_literal<M-1>(other);
     }
+    
+    constexpr static std::size_t size() { return N; }
 
     operator std::string() const
     {

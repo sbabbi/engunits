@@ -27,7 +27,8 @@
 #ifndef ENGINEERING_UNITS_IO_HPP
 #define ENGINEERING_UNITS_IO_HPP
 
-#include <iosfwd>
+#include <algorithm>
+#include <sstream>
 
 #include <engineering_units/quantity.hpp>
 #include <engineering_units/unit/traits.hpp>
@@ -51,7 +52,27 @@ ENGUNITS_ENABLE_IF_T(
 template<class T, class ... Units>
 std::ostream& operator<<(std::ostream & os, quantity<T, Units...> const & x)
 {
-    return os << x.value() << " " << x.unit();
+    const auto w = os.width();
+    const auto symbol = unit_traits< 
+        typename quantity<T, Units...>::unit_type
+    >::symbol();
+    
+    if ( w != 0 && (os.flags() | std::ios::left) )
+    {
+        std::ostringstream ss;
+        ss.copyfmt(os);
+        ss.width(0);
+        ss << x.value() << symbol.c_str();
+        
+        os << ss.str();
+    }
+    else
+    {
+        os.width( std::max<std::streamsize>(0, w - std::streamsize (symbol.size()) ) );
+        os << x.value() << symbol.c_str();
+    }
+    
+    return os;
 }
 
 /** @} */

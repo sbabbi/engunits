@@ -25,6 +25,7 @@
  */
 
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <engineering_units/si.hpp>
 #include <engineering_units/io.hpp>
@@ -126,7 +127,9 @@ int main()
     for ( auto h = 0.0_m; h < 20000.0_m; h += 1000.0_m )
     {
         auto a = atm(h);
-        std::cout << h << "\t" << a.pressure << "\t" << (a.temperature + si::abs_zero) << std::endl;
+        std::cout << std::left << std::setw(10) << h 
+                  << std::setw(12) << a.pressure
+                  << std::setw(12) << (a.temperature + si::abs_zero) << std::endl;
     }
     
     return 0;
