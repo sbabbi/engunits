@@ -388,7 +388,7 @@ constexpr auto make_quantity_dispatch( T && t, mixed_unit<Us...> const &, std::t
 template<class T, class ... Us>
 constexpr auto make_quantity( T && t, mixed_unit<Us...> const & u )
 {
-    constexpr bool is_dimensionless = (u == dimensionless());
+    constexpr bool is_dimensionless = (mixed_unit<Us...>() == dimensionless());
     return detail::make_quantity_dispatch( std::forward<T>(t),
                                            u, 
                                            std::integral_constant<bool, is_dimensionless>() );
