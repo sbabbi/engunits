@@ -1,4 +1,4 @@
-/**
+/*
  * Boost Software License - Version 1.0 - August 17th, 2003
  *
  * Permission is hereby granted, free of charge, to any person or organization
@@ -24,21 +24,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <tuple>
-#include <engineering_units/detail/contains.hpp>
+#ifndef ENGINEERING_UNITS_DETAIL_IS_UNIQUE_HPP
+#define ENGINEERING_UNITS_DETAIL_IS_UNIQUE_HPP
 
-using engunits::detail::contains;
+#include <type_traits>
 
-static_assert( true == contains( std::tuple<int, char>{}, int{} ), 
-                "contains( tuple<int, char>, int )");
+#include <engineering_units/detail/fold_expressions.hpp>
 
-static_assert( true == contains( std::tuple<int, int, char>{}, int{} ), 
-                "contains( tuple<int, int, char>, int )");
+namespace engunits
+{
 
-static_assert( false == contains( std::tuple<int, char>{}, long{} ), 
-                "contains( tuple<int, char>, long )");
+namespace detail
+{
 
-static_assert( false == contains( std::tuple<int, int, char>{}, long{} ),
-                "contains( tuple<int, int, char>, long )");
+/**
+ * @internal
+ * @brief Checks if the arguments are not duplicated
+ */
+template<class Head, class ... Tail>
+constexpr bool is_unique_v =    
+    none_of( std::is_same<Head, Tail>::value ... ) &&
+    is_unique_v<Tail...>;
+    
+template<class Head>
+constexpr bool is_unique_v<Head> = true;
 
-int main() { return 0; }
+}
+}
+
+#endif //ENGINEERING_UNITS_DETAIL_IS_UNIQUE_HPP
+

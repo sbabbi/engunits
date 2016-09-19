@@ -33,6 +33,7 @@
 #include <engineering_units/unit/predicates.hpp>
 
 #include <engineering_units/detail/fold_expressions.hpp>
+#include <engineering_units/detail/is_unique.hpp>
 
 namespace engunits
 {
@@ -86,7 +87,9 @@ struct mixed_unit
     static_assert( detail::none_of( detail::is_mixed_unit_v<Ts> ... ),
                    "mixed_unit of mixed_unit are not allowed" );
     
-    //TODO: static_assert Ts bases are all different
+    static_assert( detail::is_unique_v<
+            typename unit_traits<Ts>::base ...
+        >, "mixed unit contains duplicates" );
 
     /**
      * @brief Return a flat version of this @c mixed_unit

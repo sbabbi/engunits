@@ -21,12 +21,6 @@ target_link_libraries( constexpr_pow_test engineering_units )
 
 add_test( NAME constexpr_pow_test COMMAND constexpr_pow_test )
 
-## contains
-add_executable( contains_test detail/contains.cpp )
-target_link_libraries( contains_test engineering_units )
-
-add_test( NAME contains_test COMMAND contains_test )
-
 ### unit
 ## base_conversion
 add_executable( base_conversion_test unit/base_conversion.cpp )
