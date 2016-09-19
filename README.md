@@ -1,9 +1,9 @@
 # Introduction
 
 `Engunits` is a C++14 library that provides compile-time dimensional analysis. 
-It aims to help developers in the physics and engineering field, allowing to catch bugs much earlier in the developement process, while mantaining zero runtime overhead.
+It aims to help developers in the physics and engineering field, allowing to catch bugs much earlier in the development process, while maintaining zero runtime overhead.
 
-It works by allowing the user to attach a unit to an integral type (such as double), and then wrapping all the operators and common mathematical functions in order to check that the units used are compatible, emitting a compiler error through `static_assert` if they are not.
+It works by allowing the user to attach a unit to an arithmetic type (such as double), and then wrapping all the operators and common mathematical functions in order to check that the units used are compatible, emitting a compiler error through `static_assert` if they are not.
 
 Additionally, the library support explicit unit conversions, in order to automatically convert units to and from the S.I. system, without hard-coded constants hanging around in the code.
 
@@ -70,7 +70,7 @@ Notice the underscore at the end of `si::meter_`? It is needed to distinguish be
 
 ---
 
-Not all the units have an associated string literal, the general way of generating a quantity from a integral type
+Not all the units have an associated literal, the general way of generating a quantity from a arithmetic type
 is to multiply the type itself by the unit:
 
 ```cpp
@@ -83,7 +83,7 @@ Rational exponents are also supported, so you can write:
     auto steel_fracture_toughness = 50.0_MPa * si::meter_<1,2>(); // Megapascal * sqrt(m)
 ```
 
-What about derived units? Actually `quantity` accepts a list of units after the underlying type, so you can have:
+What about derived units? `quantity` accepts a list of units after the underlying type, so you can have:
 
 ```cpp
     using second_ = engunits::second_;
@@ -93,7 +93,7 @@ What about derived units? Actually `quantity` accepts a list of units after the 
 ### Conversions
 
 Beside dimensional analysis, this library also provides units conversion. By design all the unit conversion must be explicit,
-in order to signal that this is actually a non-zero-overhead operation (we have to mulitply by a conversion factor).
+in order to signal that this is actually a non-zero-overhead operation (we have to multiply by a conversion factor).
 
 ```cpp
     quantity<double, si::millimeter> length( 4.0_m ); // ok, convert from meter to millimeter.
@@ -143,7 +143,7 @@ Most of the functions from `<cmath>` are overloaded in this library to provide t
     auto hyp2 = hypoth( 3.0_m, 4.0 * si::millimeter() ); // error, need an explicit conversion
 ```
 
-Trigoniometric functions are also provided:
+Trigonometric functions are also provided:
 
 ```cpp 
     double x = tan( 45.0_deg ); // x == 1
