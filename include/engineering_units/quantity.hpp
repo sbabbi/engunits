@@ -161,9 +161,7 @@ public:
     /**
      * @brief Default constructor
      */
-    constexpr quantity(
-        ENGUNITS_ENABLE_IF( std::is_default_constructible<T>::value )
-            ) noexcept( std::is_nothrow_default_constructible<T>::value )
+    constexpr quantity() noexcept( std::is_nothrow_default_constructible<T>::value )
     {}
     
     /**
@@ -325,6 +323,18 @@ public:
         quantity ) operator-=( const quantity<U, OtherUnits ...> & other )
     {
         value_ -= other.value_;
+        return *this;
+    }
+
+    constexpr quantity& operator*=( const T & other )
+    {
+        value_ *= other;
+        return *this;
+    }
+
+    constexpr quantity& operator/=( const T & other )
+    {
+        value_ /= other;
         return *this;
     }
 
