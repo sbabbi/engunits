@@ -81,6 +81,17 @@ struct string_literal
         return *this + string_literal<M-1>(other);
     }
     
+    constexpr auto operator+( char c ) const noexcept
+    {
+        char buff[N+2] = {};
+        for ( std::size_t i = 0; i < N; ++i )
+            buff[i] = v_[i];
+        buff[N] = c;
+        buff[N+1] = 0;
+
+        return string_literal<N+1>( buff );
+    }
+
     constexpr static std::size_t size() { return N; }
 
     operator std::string() const
