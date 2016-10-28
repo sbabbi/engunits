@@ -879,6 +879,22 @@ constexpr auto hypot( const quantity<T, TsUnits ... > & x,
                           x.unit() );
 }
 
+template<class T,
+         class ... TsUnits,
+         class U,
+         class ... UsUnits>
+constexpr auto atan2( const quantity<T, TsUnits ... > & y,
+                      const quantity<U, UsUnits ... > & x )
+{
+    static_assert( quantity<T, TsUnits ... >::unit() ==
+                   quantity<U, UsUnits ... >::unit(),
+                   "atan2 with different units" );
+
+    using std::atan2;
+    return atan2( y.value(), x.value() );
+}
+
+
 /** @} */
 
 }
