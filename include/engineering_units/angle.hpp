@@ -83,21 +83,21 @@ template<class T>
 constexpr auto sin( const quantity<T, degree > & x )
 {
     using std::sin;
-    return sin(x.value() * conversion_factor(degree(), radian() ));
+    return sin( x.value() * static_cast<T>(conversion_factor(degree(), radian()) ) );
 }
 
 template<class T>
 constexpr auto cos( const quantity<T, degree > & x )
 {
     using std::cos;
-    return cos(x.value() * conversion_factor(degree(), radian() ));
+    return cos(x.value() * static_cast<T>(conversion_factor(degree(), radian()) ) );
 }
 
 template<class T>
 constexpr auto tan( const quantity<T, degree > & x )
 {
     using std::tan;
-    return tan(x.value() * conversion_factor(degree(), radian() ));
+    return tan(x.value() * static_cast<T>(conversion_factor(degree(), radian() ) ) );
 }
 
 }
