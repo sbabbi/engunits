@@ -161,9 +161,8 @@ public:
     /**
      * @brief Default constructor
      */
-    constexpr quantity() noexcept( std::is_nothrow_default_constructible<T>::value )
-    {}
-    
+    constexpr quantity() noexcept( std::is_nothrow_default_constructible<T>::value ) = default;
+
     /**
      * @brief Construct with a value
      * 
